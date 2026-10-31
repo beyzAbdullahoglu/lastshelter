@@ -12,6 +12,8 @@
 [ext_resource type="Script" uid="uid://dbjx5yc6t5rf0" path="res://scripts/main.gd" id="10_mainscr"]
 [ext_resource type="PackedScene" path="res://scenes/house_tasks_modal.tscn" id="11_taskmodal"]
 [ext_resource type="PackedScene" path="res://scenes/action_modal.tscn" id="12_actionmodal"]
+[ext_resource type="PackedScene" path="res://scenes/reward_modal.tscn" id="13_rewardmodal"]
+[ext_resource type="PackedScene" path="res://scenes/crisis_modal.tscn" id="14_crisismodal"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_q8u5g"]
 texture = ExtResource("1_jlsqs")
@@ -180,6 +182,17 @@ tile_set = SubResource("TileSet_mti6b")
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+
+[node name="RewardFlowers" type="HFlowContainer" parent="World/Decorations"]
+layout_mode = 0
+offset_left = 370.0
+offset_top = 340.0
+offset_right = 470.0
+offset_bottom = 460.0
+mouse_filter = 2
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 2
+alignment = 2
 
 [node name="InteractiveObjects" type="Control" parent="World" unique_id=1734855299]
 anchors_preset = 0
@@ -363,6 +376,19 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_styles/fill = SubResource("StyleBoxFlat_naturefill")
 value = 60.0
 
+[node name="DayTimerLabel" type="Label" parent="HUD"]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 78.0
+offset_right = 190.0
+offset_bottom = 134.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 44
+text = "03:00"
+
 [node name="BottomPanel" type="PanelContainer" parent="HUD" unique_id=66225145]
 layout_mode = 1
 anchors_preset = 12
@@ -476,4 +502,10 @@ text = "END DAY →"
 layout_mode = 1
 
 [node name="ActionModal" parent="." instance=ExtResource("12_actionmodal")]
+layout_mode = 1
+
+[node name="RewardModal" parent="." instance=ExtResource("13_rewardmodal")]
+layout_mode = 1
+
+[node name="CrisisModal" parent="." instance=ExtResource("14_crisismodal")]
 layout_mode = 1
