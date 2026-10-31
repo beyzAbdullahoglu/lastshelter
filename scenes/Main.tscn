@@ -8,6 +8,8 @@
 [ext_resource type="Texture2D" uid="uid://dbeurx2aqh57w" path="res://assets/agriculture/crop_field_with_farmer.png" id="6_wp0k4"]
 [ext_resource type="Texture2D" uid="uid://w45wqvjiuaff" path="res://assets/agriculture/compost_station.png" id="7_bjd11"]
 [ext_resource type="Texture2D" uid="uid://ddd6mke4v7uql" path="res://assets/water/stone_water_well.png" id="8_qmy6f"]
+[ext_resource type="PackedScene" uid="uid://bkyfjxri6bb4s" path="res://scenes/character.tscn" id="9_q8u5g"]
+[ext_resource type="Script" uid="uid://dbjx5yc6t5rf0" path="res://scripts/main.gd" id="10_mainscr"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_q8u5g"]
 texture = ExtResource("1_jlsqs")
@@ -104,6 +106,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("10_mainscr")
 metadata/_edit_lock_ = true
 
 [node name="Background" type="ColorRect" parent="." unique_id=763853857]
@@ -234,10 +237,8 @@ texture_normal = ExtResource("8_qmy6f")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Character" type="TextureRect" parent="World" unique_id=365002385]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="Character" parent="World" unique_id=1440305276 instance=ExtResource("9_q8u5g")]
+position = Vector2(807, 379)
 
 [node name="HUD" type="Control" parent="." unique_id=572321252]
 layout_mode = 1
@@ -276,6 +277,7 @@ text = "Water"
 [node name="WaterBar" type="ProgressBar" parent="HUD/TopPanel/Resources/WaterBox" unique_id=1221849709]
 layout_mode = 2
 theme_override_styles/fill = SubResource("StyleBoxFlat_waterfill")
+value = 65.0
 
 [node name="FoodBox" type="VBoxContainer" parent="HUD/TopPanel/Resources" unique_id=1123930406]
 layout_mode = 2
@@ -288,6 +290,7 @@ text = "Food"
 [node name="FoodBar" type="ProgressBar" parent="HUD/TopPanel/Resources/FoodBox" unique_id=444369014]
 layout_mode = 2
 theme_override_styles/fill = SubResource("StyleBoxFlat_foodfill")
+value = 60.0
 
 [node name="EnergyBox" type="VBoxContainer" parent="HUD/TopPanel/Resources" unique_id=498131792]
 layout_mode = 2
@@ -300,6 +303,7 @@ text = "Energy"
 [node name="EnergyBar" type="ProgressBar" parent="HUD/TopPanel/Resources/EnergyBox" unique_id=1573674724]
 layout_mode = 2
 theme_override_styles/fill = SubResource("StyleBoxFlat_energyfill")
+value = 55.0
 
 [node name="NatureBox" type="VBoxContainer" parent="HUD/TopPanel/Resources" unique_id=1610363327]
 layout_mode = 2

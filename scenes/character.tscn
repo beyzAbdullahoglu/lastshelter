@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://bkyfjxri6bb4s"]
+
+[ext_resource type="Texture2D" uid="uid://cent6lr26efs7" path="res://assets/characters/survivor_pose_01.png" id="1_agfs1"]
+[ext_resource type="Script" path="res://scripts/character.gd" id="2_charscr"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3hn2w"]
+size = Vector2(31, 86)
+
+[node name="CharacterBody2D" type="CharacterBody2D" unique_id=1440305276]
+script = ExtResource("2_charscr")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=228625332]
+position = Vector2(-0.5, -3)
+shape = SubResource("RectangleShape2D_3hn2w")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1029941107]
+position = Vector2(-1.999939, -3)
+scale = Vector2(0.5872088, 0.5198413)
+texture = ExtResource("1_agfs1")
