@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://ddd6mke4v7uql" path="res://assets/water/stone_water_well.png" id="8_qmy6f"]
 [ext_resource type="PackedScene" uid="uid://bkyfjxri6bb4s" path="res://scenes/character.tscn" id="9_q8u5g"]
 [ext_resource type="Script" uid="uid://dbjx5yc6t5rf0" path="res://scripts/main.gd" id="10_mainscr"]
+[ext_resource type="PackedScene" path="res://scenes/house_tasks_modal.tscn" id="11_taskmodal"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_q8u5g"]
 texture = ExtResource("1_jlsqs")
@@ -98,6 +99,30 @@ corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pin"]
+bg_color = Color(0.9137255, 0.7882353, 0.29411766, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.14901961, 0.23137255, 0.19607843, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pinhover"]
+bg_color = Color(1, 0.8784314, 0.43137255, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.14901961, 0.23137255, 0.19607843, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
 
 [node name="Main" type="Control" unique_id=1669467788]
 layout_mode = 3
@@ -196,6 +221,22 @@ offset_bottom = 440.0
 texture_normal = ExtResource("1_rvslj")
 ignore_texture_size = true
 stretch_mode = 5
+
+[node name="HouseTaskPin" type="Button" parent="World/InteractiveObjects/House"]
+layout_mode = 0
+offset_left = 134.0
+offset_top = -20.0
+offset_right = 166.0
+offset_bottom = 12.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.14901961, 0.23137255, 0.19607843, 1)
+theme_override_colors/font_hover_color = Color(0.14901961, 0.23137255, 0.19607843, 1)
+theme_override_colors/font_pressed_color = Color(0.14901961, 0.23137255, 0.19607843, 1)
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_pin")
+theme_override_styles/hover = SubResource("StyleBoxFlat_pinhover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pinhover")
+text = "!"
 
 [node name="Pond" type="TextureButton" parent="World/InteractiveObjects" unique_id=1827483150]
 layout_mode = 0
@@ -429,3 +470,6 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBoxFlat_nextdaynormal")
 text = "END DAY →"
+
+[node name="HouseTasksModal" parent="." instance=ExtResource("11_taskmodal")]
+layout_mode = 1
