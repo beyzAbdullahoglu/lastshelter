@@ -21,28 +21,117 @@ tile_offset_axis = 1
 tile_size = Vector2i(210, 110)
 sources/0 = SubResource("TileSetAtlasSource_q8u5g")
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uea44"]
+bg_color = Color(0.14901961, 0.23137255, 0.1882353, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.5019608, 0.41960785, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_waterfill"]
+bg_color = Color(0.20392157, 0.59607846, 0.85882354, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_foodfill"]
+bg_color = Color(0.8509804, 0.6431373, 0.25490198, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_energyfill"]
+bg_color = Color(0.9137255, 0.7882353, 0.29411766, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_naturefill"]
+bg_color = Color(0.39607844, 0.6509804, 0.42352942, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bottompanel"]
+bg_color = Color(0.14901961, 0.23137255, 0.19607843, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.3254902, 0.40784314, 0.3529412, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_childbox"]
+bg_color = Color(0.20784314, 0.29411766, 0.24313726, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.3254902, 0.40784314, 0.3529412, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nextdaynormal"]
+bg_color = Color(0.47058824, 0.60784316, 0.40784314, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.3254902, 0.40784314, 0.3529412, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
 [node name="Main" type="Control" unique_id=1669467788]
 layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_lock_ = true
 
 [node name="Background" type="ColorRect" parent="." unique_id=763853857]
 layout_mode = 1
-anchors_preset = -1
-anchor_right = 10.212001
-anchor_bottom = 8.344001
-offset_top = -3.0
-offset_right = 4247.52
-offset_bottom = 3437.24
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.16470589, 0.26666668, 0.20392157, 1)
+metadata/_edit_lock_ = true
 
 [node name="World" type="Control" parent="." unique_id=2029518097]
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+custom_minimum_size = Vector2(1280, 720)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -640.0
+offset_top = -360.0
+offset_right = 640.0
+offset_bottom = 360.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+metadata/_edit_lock_ = true
 
 [node name="Ground" type="Node2D" parent="World" unique_id=57863866]
 
@@ -70,9 +159,9 @@ offset_bottom = 40.0
 
 [node name="RecyclingBin" type="TextureButton" parent="World/InteractiveObjects" unique_id=899717288]
 layout_mode = 0
-offset_left = 1000.0
+offset_left = 343.0
 offset_top = 430.0
-offset_right = 1160.0
+offset_right = 503.0
 offset_bottom = 570.0
 texture_normal = ExtResource("2_q8u5g")
 ignore_texture_size = true
@@ -87,10 +176,10 @@ stretch_mode = 5
 
 [node name="SolarPanel" type="TextureButton" parent="World/InteractiveObjects" unique_id=1161615277]
 layout_mode = 0
-offset_left = 699.0
-offset_top = 34.0
-offset_right = 899.0
-offset_bottom = 184.0
+offset_left = 707.0
+offset_top = 106.0
+offset_right = 907.0
+offset_bottom = 256.0
 texture_normal = ExtResource("3_lhr70")
 ignore_texture_size = true
 stretch_mode = 5
@@ -107,40 +196,40 @@ stretch_mode = 5
 
 [node name="Pond" type="TextureButton" parent="World/InteractiveObjects" unique_id=1827483150]
 layout_mode = 0
-offset_left = 65.0
-offset_top = 250.0
-offset_right = 325.0
-offset_bottom = 440.0
+offset_left = 118.0
+offset_top = 235.0
+offset_right = 378.0
+offset_bottom = 425.0
 texture_normal = ExtResource("2_0bbpv")
 ignore_texture_size = true
 stretch_mode = 5
 
 [node name="Farm" type="TextureButton" parent="World/InteractiveObjects" unique_id=538947079]
 layout_mode = 0
-offset_left = 850.0
-offset_top = 235.0
-offset_right = 1150.0
-offset_bottom = 455.0
+offset_left = 848.0
+offset_top = 227.0
+offset_right = 1148.0
+offset_bottom = 447.0
 texture_normal = ExtResource("6_wp0k4")
 ignore_texture_size = true
 stretch_mode = 5
 
 [node name="Compost" type="TextureButton" parent="World/InteractiveObjects" unique_id=107615510]
 layout_mode = 0
-offset_left = 760.0
-offset_top = 430.0
-offset_right = 920.0
-offset_bottom = 570.0
+offset_left = 610.0
+offset_top = 445.0
+offset_right = 770.0
+offset_bottom = 585.0
 texture_normal = ExtResource("7_bjd11")
 ignore_texture_size = true
 stretch_mode = 5
 
 [node name="WaterWell" type="TextureButton" parent="World/InteractiveObjects" unique_id=833619539]
 layout_mode = 0
-offset_left = 405.0
-offset_top = 449.0
-offset_right = 550.0
-offset_bottom = 599.0
+offset_left = 1059.0
+offset_top = 382.0
+offset_right = 1204.0
+offset_bottom = 532.0
 texture_normal = ExtResource("8_qmy6f")
 ignore_texture_size = true
 stretch_mode = 5
@@ -149,3 +238,190 @@ stretch_mode = 5
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
+
+[node name="HUD" type="Control" parent="." unique_id=572321252]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+metadata/_edit_lock_ = true
+
+[node name="TopPanel" type="PanelContainer" parent="HUD" unique_id=1534899572]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 20.0
+offset_top = 15.0
+offset_right = -20.0
+offset_bottom = 69.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_uea44")
+
+[node name="Resources" type="HBoxContainer" parent="HUD/TopPanel" unique_id=1849982206]
+layout_mode = 2
+theme_override_constants/separation = 50
+
+[node name="WaterBox" type="VBoxContainer" parent="HUD/TopPanel/Resources" unique_id=738598891]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="WaterLabel" type="Label" parent="HUD/TopPanel/Resources/WaterBox" unique_id=66249852]
+layout_mode = 2
+text = "Water"
+
+[node name="WaterBar" type="ProgressBar" parent="HUD/TopPanel/Resources/WaterBox" unique_id=1221849709]
+layout_mode = 2
+theme_override_styles/fill = SubResource("StyleBoxFlat_waterfill")
+
+[node name="FoodBox" type="VBoxContainer" parent="HUD/TopPanel/Resources" unique_id=1123930406]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FoodLabel" type="Label" parent="HUD/TopPanel/Resources/FoodBox" unique_id=1992033642]
+layout_mode = 2
+text = "Food"
+
+[node name="FoodBar" type="ProgressBar" parent="HUD/TopPanel/Resources/FoodBox" unique_id=444369014]
+layout_mode = 2
+theme_override_styles/fill = SubResource("StyleBoxFlat_foodfill")
+
+[node name="EnergyBox" type="VBoxContainer" parent="HUD/TopPanel/Resources" unique_id=498131792]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EnergyLabel" type="Label" parent="HUD/TopPanel/Resources/EnergyBox" unique_id=1606022071]
+layout_mode = 2
+text = "Energy"
+
+[node name="EnergyBar" type="ProgressBar" parent="HUD/TopPanel/Resources/EnergyBox" unique_id=1573674724]
+layout_mode = 2
+theme_override_styles/fill = SubResource("StyleBoxFlat_energyfill")
+
+[node name="NatureBox" type="VBoxContainer" parent="HUD/TopPanel/Resources" unique_id=1610363327]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="NatureLabel" type="Label" parent="HUD/TopPanel/Resources/NatureBox" unique_id=1056716530]
+layout_mode = 2
+offset_transform_enabled = true
+text = "Nature"
+
+[node name="NatureBar" type="ProgressBar" parent="HUD/TopPanel/Resources/NatureBox" unique_id=213004381]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_styles/fill = SubResource("StyleBoxFlat_naturefill")
+value = 60.0
+
+[node name="BottomPanel" type="PanelContainer" parent="HUD" unique_id=66225145]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -126.0
+offset_right = -20.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_bottompanel")
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD/BottomPanel" unique_id=1304861527]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
+
+[node name="MainRow" type="HBoxContainer" parent="HUD/BottomPanel/MarginContainer" unique_id=398330384]
+layout_mode = 2
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="DayBox" type="PanelContainer" parent="HUD/BottomPanel/MarginContainer/MainRow" unique_id=1718204396]
+custom_minimum_size = Vector2(160, 80)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_childbox")
+
+[node name="VBox" type="VBoxContainer" parent="HUD/BottomPanel/MarginContainer/MainRow/DayBox" unique_id=1409263155]
+layout_mode = 2
+alignment = 1
+
+[node name="DayTitle" type="Label" parent="HUD/BottomPanel/MarginContainer/MainRow/DayBox/VBox" unique_id=827364019]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7764706, 0.84313726, 0.78431374, 1)
+theme_override_font_sizes/font_size = 12
+text = "CALENDAR"
+horizontal_alignment = 1
+
+[node name="DayLabel" type="Label" parent="HUD/BottomPanel/MarginContainer/MainRow/DayBox/VBox" unique_id=395459532]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 21
+text = "DAY 01 / 06"
+horizontal_alignment = 1
+
+[node name="HealthBox" type="PanelContainer" parent="HUD/BottomPanel/MarginContainer/MainRow" unique_id=1590437712]
+custom_minimum_size = Vector2(160, 80)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_childbox")
+
+[node name="VBox" type="VBoxContainer" parent="HUD/BottomPanel/MarginContainer/MainRow/HealthBox" unique_id=2087345561]
+layout_mode = 2
+alignment = 1
+
+[node name="HealthTitle" type="Label" parent="HUD/BottomPanel/MarginContainer/MainRow/HealthBox/VBox" unique_id=1162038475]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7764706, 0.84313726, 0.78431374, 1)
+theme_override_font_sizes/font_size = 12
+text = "HEALTH"
+horizontal_alignment = 1
+
+[node name="HealthLabel" type="Label" parent="HUD/BottomPanel/MarginContainer/MainRow/HealthBox/VBox" unique_id=455153535]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9137255, 0.60784316, 0.5686275, 1)
+theme_override_font_sizes/font_size = 23
+text = "♥️ ♥️ ♥️"
+horizontal_alignment = 1
+
+[node name="ActionBox" type="PanelContainer" parent="HUD/BottomPanel/MarginContainer/MainRow" unique_id=943817260]
+custom_minimum_size = Vector2(200, 80)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_childbox")
+
+[node name="VBox" type="VBoxContainer" parent="HUD/BottomPanel/MarginContainer/MainRow/ActionBox" unique_id=1275509834]
+layout_mode = 2
+alignment = 1
+
+[node name="ActionTitle" type="Label" parent="HUD/BottomPanel/MarginContainer/MainRow/ActionBox/VBox" unique_id=691827344]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7764706, 0.84313726, 0.78431374, 1)
+theme_override_font_sizes/font_size = 12
+text = "ACTIONS LEFT"
+horizontal_alignment = 1
+
+[node name="ActionLabel" type="Label" parent="HUD/BottomPanel/MarginContainer/MainRow/ActionBox/VBox" unique_id=1907830485]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9529412, 0.8352941, 0.5411765, 1)
+theme_override_font_sizes/font_size = 23
+text = "3 / 3"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="HUD/BottomPanel/MarginContainer/MainRow" unique_id=1836502917]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="NextDayButton" type="Button" parent="HUD/BottomPanel/MarginContainer/MainRow" unique_id=560515883]
+custom_minimum_size = Vector2(180, 58)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_nextdaynormal")
+text = "END DAY →"
