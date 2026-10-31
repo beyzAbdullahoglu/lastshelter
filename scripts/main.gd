@@ -3,6 +3,8 @@ extends Control
 const PIN_BOB_HEIGHT := 6.0
 const PIN_BOB_DURATION := 0.6
 const FARM_GROWTH_TICK_DURATION := 1.0
+const BASIC_IRRIGATION_WATER_COST := 18.0
+const DRIP_IRRIGATION_WATER_COST := 8.0
 const FARM_EMPTY_TEXTURE: Texture2D = preload("res://assets/agriculture/empty.png")
 const FARM_GROWING_TEXTURE: Texture2D = preload("res://assets/agriculture/growing.png")
 const FARM_WATERED_TEXTURE: Texture2D = preload("res://assets/agriculture/watered.png")
@@ -193,6 +195,16 @@ func _open_farm_options() -> void:
 		if _farm_irrigated_today:
 			farm_action_modal.open_action("", "You have already irrigated today.")
 			return
+		if water_bar.value < DRIP_IRRIGATION_WATER_COST:
+			_show_insufficient_farm_water(DRIP_IRRIGATION_WATER_COST)
+			return
+		if water_bar.value < BASIC_IRRIGATION_WATER_COST:
+			farm_action_modal.open_action(
+				"plant_drip",
+				"Not enough water for basic irrigation. Drip irrigation needs 8 units.",
+				"Drip irrigation"
+			)
+			return
 		farm_action_modal.open_choices(
 			"Choose a planting and watering method",
 			"plant_basic",
@@ -205,12 +217,22 @@ func _open_farm_options() -> void:
 func _on_farm_option_selected(option_id: String) -> void:
 	match option_id:
 		"plant_basic":
-			if _farm_is_planted or _farm_irrigated_today or not _try_spend_action():
+			if _farm_is_planted or _farm_irrigated_today:
+				return
+			if water_bar.value < BASIC_IRRIGATION_WATER_COST:
+				_show_insufficient_farm_water(BASIC_IRRIGATION_WATER_COST)
+				return
+			if not _try_spend_action():
 				return
 			_apply_resource_changes(-18, 0, -3, -5)
 			_start_farm_growth(15)
 		"plant_drip":
-			if _farm_is_planted or _farm_irrigated_today or not _try_spend_action():
+			if _farm_is_planted or _farm_irrigated_today:
+				return
+			if water_bar.value < DRIP_IRRIGATION_WATER_COST:
+				_show_insufficient_farm_water(DRIP_IRRIGATION_WATER_COST)
+				return
+			if not _try_spend_action():
 				return
 			_apply_resource_changes(-8, 0, -2, -1)
 			_start_farm_growth(30)
@@ -235,6 +257,13 @@ func _apply_resource_changes(water: float, food: float, energy: float, nature: f
 	food_bar.value += food
 	energy_bar.value += energy
 	nature_bar.value += nature
+
+
+func _show_insufficient_farm_water(required_water: float) -> void:
+	farm_action_modal.open_action(
+		"",
+		"Not enough water. This irrigation method needs %d units." % int(required_water)
+	)
 
 
 func _start_farm_growth(duration_seconds: int) -> void:
