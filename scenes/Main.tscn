@@ -268,7 +268,7 @@ texture_normal = ExtResource("7_bjd11")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="WaterWell" type="TextureButton" parent="World/InteractiveObjects" unique_id=833619539]
+[node name="WaterWell" type="TextureButton" parent="World/InteractiveObjects" unique_id=833619539 node_paths=PackedStringArray("water_bar")]
 layout_mode = 0
 offset_left = 1059.0
 offset_top = 382.0
