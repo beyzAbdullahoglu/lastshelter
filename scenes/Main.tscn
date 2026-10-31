@@ -1,3 +1,197 @@
 [gd_scene format=3 uid="uid://bn8xdh40oe841"]
 
-[node name="Main" type="Node2D" unique_id=80789391]
+[ext_resource type="Texture2D" uid="uid://crgxevnf320hj" path="res://assets/terrain/grass_tile.png" id="1_jlsqs"]
+[ext_resource type="Texture2D" uid="uid://bbh21chttgnfg" path="res://assets/buildings/house_cottage.png" id="1_rvslj"]
+[ext_resource type="Texture2D" uid="uid://cygwm0b2c0g5k" path="res://assets/water/pond_healthy.png" id="2_0bbpv"]
+[ext_resource type="Texture2D" uid="uid://7kby2xs0sggp" path="res://assets/props/recycling_bins.png" id="2_q8u5g"]
+[ext_resource type="Texture2D" uid="uid://dlh6kqrt77wrl" path="res://assets/energy/solar_panel_array.png" id="3_lhr70"]
+[ext_resource type="Texture2D" uid="uid://dbeurx2aqh57w" path="res://assets/agriculture/crop_field_with_farmer.png" id="6_wp0k4"]
+[ext_resource type="Texture2D" uid="uid://w45wqvjiuaff" path="res://assets/agriculture/compost_station.png" id="7_bjd11"]
+[ext_resource type="Texture2D" uid="uid://ddd6mke4v7uql" path="res://assets/water/stone_water_well.png" id="8_qmy6f"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mwfav"]
+texture = ExtResource("1_jlsqs")
+4:0/0 = 0
+5:0/0 = 0
+3:1/0 = 0
+4:1/0 = 0
+5:1/0 = 0
+6:1/0 = 0
+7:1/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
+4:2/0 = 0
+5:2/0 = 0
+6:2/0 = 0
+7:2/0 = 0
+8:2/0 = 0
+0:3/0 = 0
+1:3/0 = 0
+2:3/0 = 0
+3:3/0 = 0
+4:3/0 = 0
+5:3/0 = 0
+6:3/0 = 0
+7:3/0 = 0
+8:3/0 = 0
+9:3/0 = 0
+0:4/0 = 0
+1:4/0 = 0
+2:4/0 = 0
+3:4/0 = 0
+4:4/0 = 0
+5:4/0 = 0
+6:4/0 = 0
+7:4/0 = 0
+8:4/0 = 0
+9:4/0 = 0
+1:5/0 = 0
+2:5/0 = 0
+3:5/0 = 0
+4:5/0 = 0
+5:5/0 = 0
+6:5/0 = 0
+7:5/0 = 0
+8:5/0 = 0
+3:6/0 = 0
+4:6/0 = 0
+5:6/0 = 0
+6:6/0 = 0
+7:6/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_mti6b"]
+tile_shape = 1
+tile_layout = 5
+tile_offset_axis = 1
+tile_size = Vector2i(166, 16)
+sources/0 = SubResource("TileSetAtlasSource_mwfav")
+
+[node name="Main" type="Control" unique_id=1669467788]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Background" type="ColorRect" parent="." unique_id=763853857]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 10.212001
+anchor_bottom = 8.344001
+offset_left = -43.0
+offset_top = 20.0
+offset_right = 4247.52
+offset_bottom = 3437.24
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.16470589, 0.26666668, 0.20392157, 1)
+
+[node name="World" type="Control" parent="." unique_id=2029518097]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Ground" type="Node2D" parent="World" unique_id=57863866]
+
+[node name="GrassLayer" type="TileMapLayer" parent="World/Ground" unique_id=196658998]
+tile_set = SubResource("TileSet_mti6b")
+
+[node name="SoilLayer" type="TileMapLayer" parent="World/Ground" unique_id=640079899]
+
+[node name="WaterLayer" type="TileMapLayer" parent="World/Ground" unique_id=1202839030]
+
+[node name="FlowerLayer" type="TileMapLayer" parent="World/Ground" unique_id=1738079261]
+
+[node name="CrackedSoilLayer" type="TileMapLayer" parent="World/Ground" unique_id=911183695]
+
+[node name="Decorations" type="Control" parent="World" unique_id=727226050]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="InteractiveObjects" type="Control" parent="World" unique_id=1734855299]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="RecyclingBin" type="TextureButton" parent="World/InteractiveObjects" unique_id=899717288]
+layout_mode = 0
+offset_left = 1000.0
+offset_top = 430.0
+offset_right = 1160.0
+offset_bottom = 570.0
+texture_normal = ExtResource("2_q8u5g")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Garden" type="TextureButton" parent="World/InteractiveObjects" unique_id=488908621]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="SolarPanel" type="TextureButton" parent="World/InteractiveObjects" unique_id=1161615277]
+layout_mode = 0
+offset_left = 460.0
+offset_top = 440.0
+offset_right = 660.0
+offset_bottom = 590.0
+texture_normal = ExtResource("3_lhr70")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="House" type="TextureButton" parent="World/InteractiveObjects" unique_id=948986070]
+layout_mode = 0
+offset_left = 460.0
+offset_top = 190.0
+offset_right = 760.0
+offset_bottom = 440.0
+texture_normal = ExtResource("1_rvslj")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Pond" type="TextureButton" parent="World/InteractiveObjects" unique_id=1827483150]
+layout_mode = 0
+offset_left = 65.0
+offset_top = 250.0
+offset_right = 325.0
+offset_bottom = 440.0
+texture_normal = ExtResource("2_0bbpv")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Farm" type="TextureButton" parent="World/InteractiveObjects" unique_id=538947079]
+layout_mode = 0
+offset_left = 850.0
+offset_top = 235.0
+offset_right = 1150.0
+offset_bottom = 455.0
+texture_normal = ExtResource("6_wp0k4")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Compost" type="TextureButton" parent="World/InteractiveObjects" unique_id=107615510]
+layout_mode = 0
+offset_left = 760.0
+offset_top = 430.0
+offset_right = 920.0
+offset_bottom = 570.0
+texture_normal = ExtResource("7_bjd11")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="WaterWell" type="TextureButton" parent="World/InteractiveObjects" unique_id=833619539]
+layout_mode = 0
+offset_left = 200.0
+offset_top = 420.0
+offset_right = 345.0
+offset_bottom = 570.0
+texture_normal = ExtResource("8_qmy6f")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Character" type="TextureRect" parent="World" unique_id=365002385]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
