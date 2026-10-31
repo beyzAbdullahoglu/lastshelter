@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cqjuj2ch5cccx"
-path="res://.godot/imported/İzometrik Çiftlik Toprağı Karosu.png-bec0c310780e7cbe95aef398891ff1d6.ctex"
+path="res://.godot/imported/empty.png-ade81bdb7f4214a8db42f5c98171d946.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/agriculture/İzometrik Çiftlik Toprağı Karosu.png"
-dest_files=["res://.godot/imported/İzometrik Çiftlik Toprağı Karosu.png-bec0c310780e7cbe95aef398891ff1d6.ctex"]
+source_file="res://assets/agriculture/empty.png"
+dest_files=["res://.godot/imported/empty.png-ade81bdb7f4214a8db42f5c98171d946.ctex"]
 
 [params]
 

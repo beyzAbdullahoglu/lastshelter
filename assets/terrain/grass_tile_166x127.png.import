@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://w07u1d5wiim"
-path="res://.godot/imported/İzometrik Sulanmış Tarla Karosu.png-ce8a66144a900b713b2ed5d179471d4a.ctex"
+uid="uid://dieqtkxkriv7h"
+path="res://.godot/imported/grass_tile_166x127.png-8fafcc1ba7d6d2add813eb5b7f3b87e6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/agriculture/İzometrik Sulanmış Tarla Karosu.png"
-dest_files=["res://.godot/imported/İzometrik Sulanmış Tarla Karosu.png-ce8a66144a900b713b2ed5d179471d4a.ctex"]
+source_file="res://assets/terrain/grass_tile_166x127.png"
+dest_files=["res://.godot/imported/grass_tile_166x127.png-8fafcc1ba7d6d2add813eb5b7f3b87e6.ctex"]
 
 [params]
 

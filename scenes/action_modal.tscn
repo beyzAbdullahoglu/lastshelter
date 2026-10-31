@@ -66,6 +66,15 @@ size_flags_horizontal = 4
 mouse_default_cursor_shape = 2
 text = "Collect"
 
+[node name="SecondaryActionButton" type="Button" parent="Panel/Margin/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_default_cursor_shape = 2
+text = "Choose"
+visible = false
+
 [node name="CloseButton" type="Button" parent="."]
 unique_name_in_owner = true
 layout_mode = 0
