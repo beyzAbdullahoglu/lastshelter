@@ -5,13 +5,13 @@
 [ext_resource type="Texture2D" uid="uid://cygwm0b2c0g5k" path="res://assets/water/pond_healthy.png" id="2_0bbpv"]
 [ext_resource type="Texture2D" uid="uid://7kby2xs0sggp" path="res://assets/props/recycling_bins.png" id="2_q8u5g"]
 [ext_resource type="Texture2D" uid="uid://dlh6kqrt77wrl" path="res://assets/energy/solar_panel_array.png" id="3_lhr70"]
-[ext_resource type="Texture2D" uid="uid://dbeurx2aqh57w" path="res://assets/agriculture/crop_field_with_farmer.png" id="6_wp0k4"]
 [ext_resource type="Texture2D" uid="uid://w45wqvjiuaff" path="res://assets/agriculture/compost_station.png" id="7_bjd11"]
 [ext_resource type="Texture2D" uid="uid://ddd6mke4v7uql" path="res://assets/water/stone_water_well.png" id="8_qmy6f"]
 [ext_resource type="PackedScene" uid="uid://bkyfjxri6bb4s" path="res://scenes/character.tscn" id="9_q8u5g"]
 [ext_resource type="Script" uid="uid://dbjx5yc6t5rf0" path="res://scripts/main.gd" id="10_mainscr"]
 [ext_resource type="PackedScene" path="res://scenes/house_tasks_modal.tscn" id="11_taskmodal"]
 [ext_resource type="PackedScene" path="res://scenes/action_modal.tscn" id="12_actionmodal"]
+[ext_resource type="Texture2D" uid="uid://cqjuj2ch5cccx" path="res://assets/agriculture/empty.png" id="13_farm_empty"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_q8u5g"]
 texture = ExtResource("1_jlsqs")
@@ -24,6 +24,30 @@ tile_layout = 5
 tile_offset_axis = 1
 tile_size = Vector2i(210, 110)
 sources/0 = SubResource("TileSetAtlasSource_q8u5g")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pin"]
+bg_color = Color(0.9137255, 0.7882353, 0.29411766, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.14901961, 0.23137255, 0.19607843, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pinhover"]
+bg_color = Color(1, 0.8784314, 0.43137255, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.14901961, 0.23137255, 0.19607843, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uea44"]
 bg_color = Color(0.14901961, 0.23137255, 0.1882353, 1)
@@ -100,30 +124,6 @@ corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pin"]
-bg_color = Color(0.9137255, 0.7882353, 0.29411766, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.14901961, 0.23137255, 0.19607843, 1)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pinhover"]
-bg_color = Color(1, 0.8784314, 0.43137255, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.14901961, 0.23137255, 0.19607843, 1)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
 
 [node name="Main" type="Control" unique_id=1669467788]
 layout_mode = 3
@@ -223,7 +223,7 @@ texture_normal = ExtResource("1_rvslj")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="HouseTaskPin" type="Button" parent="World/InteractiveObjects/House"]
+[node name="HouseTaskPin" type="Button" parent="World/InteractiveObjects/House" unique_id=2118941183]
 layout_mode = 0
 offset_left = 134.0
 offset_top = -20.0
@@ -231,12 +231,12 @@ offset_right = 166.0
 offset_bottom = 12.0
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0.14901961, 0.23137255, 0.19607843, 1)
-theme_override_colors/font_hover_color = Color(0.14901961, 0.23137255, 0.19607843, 1)
 theme_override_colors/font_pressed_color = Color(0.14901961, 0.23137255, 0.19607843, 1)
+theme_override_colors/font_hover_color = Color(0.14901961, 0.23137255, 0.19607843, 1)
 theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxFlat_pin")
-theme_override_styles/hover = SubResource("StyleBoxFlat_pinhover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_pinhover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_pinhover")
 text = "!"
 
 [node name="Pond" type="TextureButton" parent="World/InteractiveObjects" unique_id=1827483150]
@@ -255,9 +255,26 @@ offset_left = 848.0
 offset_top = 227.0
 offset_right = 1148.0
 offset_bottom = 447.0
-texture_normal = ExtResource("6_wp0k4")
+texture_normal = ExtResource("13_farm_empty")
+texture_pressed = ExtResource("13_farm_empty")
+texture_hover = ExtResource("13_farm_empty")
 ignore_texture_size = true
 stretch_mode = 5
+
+[node name="FarmTimer" type="Label" parent="World/InteractiveObjects/Farm"]
+layout_mode = 0
+offset_left = 90.0
+offset_top = -36.0
+offset_right = 210.0
+offset_bottom = -8.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.12, 0.09, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 20
+text = "00:15"
+horizontal_alignment = 1
+visible = false
 
 [node name="Compost" type="TextureButton" parent="World/InteractiveObjects" unique_id=107615510]
 layout_mode = 0
@@ -269,7 +286,7 @@ texture_normal = ExtResource("7_bjd11")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="WaterWell" type="TextureButton" parent="World/InteractiveObjects" unique_id=833619539 node_paths=PackedStringArray("water_bar")]
+[node name="WaterWell" type="TextureButton" parent="World/InteractiveObjects" unique_id=833619539]
 layout_mode = 0
 offset_left = 1059.0
 offset_top = 382.0
@@ -472,8 +489,11 @@ theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBoxFlat_nextdaynormal")
 text = "END DAY →"
 
-[node name="HouseTasksModal" parent="." instance=ExtResource("11_taskmodal")]
+[node name="HouseTasksModal" parent="." unique_id=224081239 instance=ExtResource("11_taskmodal")]
 layout_mode = 1
 
-[node name="ActionModal" parent="." instance=ExtResource("12_actionmodal")]
+[node name="ActionModal" parent="." unique_id=388027520 instance=ExtResource("12_actionmodal")]
+layout_mode = 1
+
+[node name="FarmActionModal" parent="." unique_id=627473912 instance=ExtResource("12_actionmodal")]
 layout_mode = 1

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cmou0wry6jq6i"
-path="res://.godot/imported/İzometrik Altın Buğday Tarlası Tile'ı.png-0f7e87614b41c841e1d9b9f3a790caf0.ctex"
+uid="uid://w07u1d5wiim"
+path="res://.godot/imported/watered.png-fd4c288878b4efb08765a14ce91a92d0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/agriculture/İzometrik Altın Buğday Tarlası Tile'ı.png"
-dest_files=["res://.godot/imported/İzometrik Altın Buğday Tarlası Tile'ı.png-0f7e87614b41c841e1d9b9f3a790caf0.ctex"]
+source_file="res://assets/agriculture/watered.png"
+dest_files=["res://.godot/imported/watered.png-fd4c288878b4efb08765a14ce91a92d0.ctex"]
 
 [params]
 
