@@ -10,11 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://ddd6mke4v7uql" path="res://assets/water/stone_water_well.png" id="8_qmy6f"]
 [ext_resource type="PackedScene" uid="uid://bkyfjxri6bb4s" path="res://scenes/character.tscn" id="9_q8u5g"]
 [ext_resource type="Script" uid="uid://dbjx5yc6t5rf0" path="res://scripts/main.gd" id="10_mainscr"]
-<<<<<<< Updated upstream
 [ext_resource type="PackedScene" path="res://scenes/house_tasks_modal.tscn" id="11_taskmodal"]
-=======
-[ext_resource type="Script" uid="uid://bcggull7lk4y4" path="res://scripts/water_well.gd" id="10_wp0k4"]
->>>>>>> Stashed changes
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_q8u5g"]
 texture = ExtResource("1_jlsqs")
@@ -278,12 +274,9 @@ offset_left = 1059.0
 offset_top = 382.0
 offset_right = 1204.0
 offset_bottom = 532.0
-tooltip_text = "100 / 100"
 texture_normal = ExtResource("8_qmy6f")
 ignore_texture_size = true
 stretch_mode = 5
-script = ExtResource("10_wp0k4")
-water_bar = NodePath("../../../HUD/TopPanel/Resources/WaterBox/WaterBar")
 
 [node name="Character" parent="World" unique_id=1440305276 instance=ExtResource("9_q8u5g")]
 position = Vector2(807, 379)
@@ -478,19 +471,5 @@ theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBoxFlat_nextdaynormal")
 text = "END DAY →"
 
-<<<<<<< Updated upstream
 [node name="HouseTasksModal" parent="." instance=ExtResource("11_taskmodal")]
 layout_mode = 1
-=======
-[node name="DrawWaterPopup" type="PanelContainer" parent="." unique_id=1716580033]
-visible = false
-custom_minimum_size = Vector2(180, 65)
-layout_mode = 0
-offset_right = 180.0
-offset_bottom = 65.0
-
-[node name="DrawWaterButton" type="Button" parent="DrawWaterPopup" unique_id=2090661718]
-custom_minimum_size = Vector2(170, 45)
-layout_mode = 2
-text = "💧 Draw Water"
->>>>>>> Stashed changes
