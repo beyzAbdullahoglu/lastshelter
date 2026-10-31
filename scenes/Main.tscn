@@ -12,9 +12,9 @@
 [ext_resource type="Texture2D" uid="uid://k4a1a6b4p2ef" path="res://assets/tiles/grass_tile_166x127.png" id="11_qmy6f"]
 [ext_resource type="PackedScene" path="res://scenes/house_tasks_modal.tscn" id="11_taskmodal"]
 [ext_resource type="PackedScene" path="res://scenes/action_modal.tscn" id="12_actionmodal"]
+[ext_resource type="Texture2D" uid="uid://cqjuj2ch5cccx" path="res://assets/agriculture/empty.png" id="13_farm_empty"]
 [ext_resource type="PackedScene" path="res://scenes/reward_modal.tscn" id="13_rewardmodal"]
 [ext_resource type="PackedScene" path="res://scenes/crisis_modal.tscn" id="14_crisismodal"]
-[ext_resource type="Texture2D" uid="uid://cqjuj2ch5cccx" path="res://assets/agriculture/empty.png" id="13_farm_empty"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mwfav"]
 texture = ExtResource("11_qmy6f")
@@ -199,7 +199,7 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="RewardFlowers" type="HFlowContainer" parent="World/Decorations"]
+[node name="RewardFlowers" type="HFlowContainer" parent="World/Decorations" unique_id=96236896]
 layout_mode = 0
 offset_left = 370.0
 offset_top = 340.0
@@ -408,13 +408,12 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_styles/fill = SubResource("StyleBoxFlat_naturefill")
 value = 60.0
 
-[node name="DayTimerLabel" type="Label" parent="HUD"]
+[node name="DayTimerLabel" type="Label" parent="HUD" unique_id=1873397948]
 layout_mode = 0
 offset_left = 30.0
 offset_top = 78.0
 offset_right = 190.0
 offset_bottom = 134.0
-mouse_filter = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 10
@@ -538,11 +537,12 @@ layout_mode = 1
 
 [node name="FarmActionModal" parent="." unique_id=627473912 instance=ExtResource("12_actionmodal")]
 layout_mode = 1
-[node name="ActionModal" parent="." instance=ExtResource("12_actionmodal")]
+
+[node name="ActionModal2" parent="." unique_id=1950044030 instance=ExtResource("12_actionmodal")]
 layout_mode = 1
 
-[node name="RewardModal" parent="." instance=ExtResource("13_rewardmodal")]
+[node name="RewardModal" parent="." unique_id=1394249451 instance=ExtResource("13_rewardmodal")]
 layout_mode = 1
 
-[node name="CrisisModal" parent="." instance=ExtResource("14_crisismodal")]
+[node name="CrisisModal" parent="." unique_id=517874283 instance=ExtResource("14_crisismodal")]
 layout_mode = 1
