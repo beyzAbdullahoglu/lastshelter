@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://bkyfjxri6bb4s" path="res://scenes/character.tscn" id="9_q8u5g"]
 [ext_resource type="Script" uid="uid://dbjx5yc6t5rf0" path="res://scripts/main.gd" id="10_mainscr"]
 [ext_resource type="PackedScene" path="res://scenes/house_tasks_modal.tscn" id="11_taskmodal"]
+[ext_resource type="PackedScene" path="res://scenes/action_modal.tscn" id="12_actionmodal"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_q8u5g"]
 texture = ExtResource("1_jlsqs")
@@ -472,4 +473,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_nextdaynormal")
 text = "END DAY →"
 
 [node name="HouseTasksModal" parent="." instance=ExtResource("11_taskmodal")]
+layout_mode = 1
+
+[node name="ActionModal" parent="." instance=ExtResource("12_actionmodal")]
 layout_mode = 1
