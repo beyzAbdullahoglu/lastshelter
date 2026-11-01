@@ -207,10 +207,10 @@ offset_bottom = 40.0
 
 [node name="RewardFlowers" type="Control" parent="World/Decorations" unique_id=96236896]
 anchors_preset = 0
-offset_left = 402.0
-offset_top = 322.0
-offset_right = 402.0
-offset_bottom = 322.0
+offset_left = 500.0
+offset_top = 464.0
+offset_right = 500.0
+offset_bottom = 464.0
 mouse_filter = 2
 
 [node name="InteractiveObjects" type="Control" parent="World" unique_id=1734855299]
