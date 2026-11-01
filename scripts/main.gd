@@ -8,6 +8,8 @@ const DRIP_IRRIGATION_WATER_COST := 8.0
 const FARM_EMPTY_TEXTURE: Texture2D = preload("res://assets/agriculture/empty.png")
 const FARM_GROWING_TEXTURE: Texture2D = preload("res://assets/agriculture/growing.png")
 const FARM_WATERED_TEXTURE: Texture2D = preload("res://assets/agriculture/watered.png")
+const POND_HEALTHY_TEXTURE: Texture2D = preload("res://assets/water/pond_healthy.png")
+const POND_HALF_DRIED_TEXTURE: Texture2D = preload("res://assets/water/pond_half_dried.png")
 const TREE_GROWING_TEXTURE: Texture2D = preload("res://assets/nature/tree_sapling.png")
 const TREE_HEALTHY_TEXTURE: Texture2D = preload("res://assets/nature/tree_healthy.png")
 const CRISIS_SOUND: AudioStream = preload("res://audio/crises_audio.wav")
@@ -73,6 +75,7 @@ const CRISIS_TIMES := [20.0, 60.0]
 @onready var tree_action_modal = $TreeActionModal
 @onready var farm_button: TextureButton = $World/InteractiveObjects/Farm
 @onready var farm_timer_label: Label = $World/InteractiveObjects/Farm/FarmTimer
+@onready var pond_button: TextureButton = $World/InteractiveObjects/Pond
 @onready var water_tank_button: TextureButton = $World/InteractiveObjects/WaterTank
 @onready var water_tank_lock: Label = $World/InteractiveObjects/WaterTank/LockIcon
 @onready var power_plant_button: TextureButton = $World/InteractiveObjects/PowerPlant
@@ -125,6 +128,7 @@ var _flower_gain_sound_player := AudioStreamPlayer.new()
 
 
 func _ready() -> void:
+	pond_button.texture_normal = POND_HEALTHY_TEXTURE
 	for child in interactive_objects.get_children():
 		if child is BaseButton:
 			child.pressed.connect(_on_object_pressed.bind(child))
@@ -291,6 +295,7 @@ func _finish_game(title: String, body: String) -> void:
 func _start_next_day() -> void:
 	_day_elapsed = 0.0
 	current_day += 1
+	pond_button.texture_normal = POND_HEALTHY_TEXTURE
 	actions_left = MAX_ACTIONS
 	_farm_irrigated_today = false
 	_farm_harvested_today = false
@@ -1007,6 +1012,9 @@ func _trigger_crisis() -> void:
 
 
 func _on_crisis_choice_made(crisis: Dictionary, intervened: bool) -> void:
+	if crisis.id == "drought":
+		pond_button.texture_normal = POND_HALF_DRIED_TEXTURE
+
 	var outcome: Dictionary = crisis.intervene if intervened else crisis.ignore
 	if intervened:
 		if not _try_spend_action():
