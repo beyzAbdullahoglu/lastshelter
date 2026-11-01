@@ -14,6 +14,7 @@ const CRISIS_SOUND: AudioStream = preload("res://audio/crises_audio.wav")
 const RESOURCE_GAIN_SOUND: AudioStream = preload("res://audio/resource_gain.wav")
 const NEW_TREASURE_SOUND: AudioStream = preload("res://audio/new_treasure.wav")
 const DAY_START_SOUND: AudioStream = preload("res://audio/day_start.wav")
+const FLOWER_GAIN_SOUND: AudioStream = preload("res://audio/flower_gain.wav")
 const REWARD_FLOWER_SIZE := Vector2(56, 56)
 # Flowers line up parallel to the house's front (door) wall (2:1 isometric, running up-right);
 # a full row continues in a new row one step further out from the wall (down-right).
@@ -120,6 +121,7 @@ var _crisis_sound_player := AudioStreamPlayer.new()
 var _resource_gain_sound_player := AudioStreamPlayer.new()
 var _new_treasure_sound_player := AudioStreamPlayer.new()
 var _day_start_sound_player := AudioStreamPlayer.new()
+var _flower_gain_sound_player := AudioStreamPlayer.new()
 
 
 func _ready() -> void:
@@ -148,6 +150,8 @@ func _ready() -> void:
 	add_child(_new_treasure_sound_player)
 	_day_start_sound_player.stream = DAY_START_SOUND
 	add_child(_day_start_sound_player)
+	_flower_gain_sound_player.stream = FLOWER_GAIN_SOUND
+	add_child(_flower_gain_sound_player)
 	_day_start_sound_player.play()
 	_todays_crises = _crisis_deck.draw_day()
 	_start_pin_bob()
@@ -992,6 +996,7 @@ func _plant_reward_flower(flower: Dictionary) -> void:
 	reward_flowers.add_child(sprite)
 	create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT) \
 		.tween_property(sprite, "scale", Vector2.ONE, REWARD_POP_DURATION)
+	_flower_gain_sound_player.play()
 
 
 func _trigger_crisis() -> void:
