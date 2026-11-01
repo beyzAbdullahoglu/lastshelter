@@ -280,7 +280,7 @@ func _renew_resources() -> Dictionary:
 func _finish_game(title: String, body: String) -> void:
 	day_modal.open_message(title, body, "Play again")
 	await day_modal.continued
-	get_tree().reload_current_scene()
+	get_tree().change_scene_to_file("res://scenes/Main.tscn")
 
 
 # Health (hearts) is intentionally carried over between days.
@@ -725,14 +725,14 @@ func _open_power_plant_options() -> void:
 		action_modal.open_action("", "No actions left today.")
 		return
 	if _power_plant_upgraded:
-		action_modal.open_action("power_collect_energy", "Collect {energy} (%d units)" % int(energy_amount), "Collect")
+		action_modal.open_action("power_collect_energy", "Collect energy (%d units)" % int(energy_amount), "Collect")
 	elif actions_left < POWER_PLANT_UPGRADE_ACTION_COST:
-		action_modal.open_action("power_collect_energy", "Collect {energy} (%d units)" % int(energy_amount), "Collect")
+		action_modal.open_action("power_collect_energy", "Collect energy (%d units)" % int(energy_amount), "Collect")
 	else:
 		action_modal.open_choices(
 			"Choose an action",
 			"power_collect_energy",
-			"Collect {energy} (%d units)" % int(energy_amount),
+			"Collect energy (%d units)" % int(energy_amount),
 			"power_improve",
 			"🍃 Improve"
 		)

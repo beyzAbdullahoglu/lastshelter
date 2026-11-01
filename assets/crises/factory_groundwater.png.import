@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bk6y0lcxsjn74"
-path="res://.godot/imported/Crisis_Factory_Groundwater_1000px.png-91038950d88c168729a23fd912a1d03e.ctex"
+uid="uid://j13g08uupcke"
+path="res://.godot/imported/factory_groundwater.png-960e6bb9f5b2d9c977b2a3cfd075eb7e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/crises/Crisis_Factory_Groundwater_1000px.png"
-dest_files=["res://.godot/imported/Crisis_Factory_Groundwater_1000px.png-91038950d88c168729a23fd912a1d03e.ctex"]
+source_file="res://assets/crises/factory_groundwater.png"
+dest_files=["res://.godot/imported/factory_groundwater.png-960e6bb9f5b2d9c977b2a3cfd075eb7e.ctex"]
 
 [params]
 
