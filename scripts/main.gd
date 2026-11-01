@@ -31,10 +31,6 @@ const COMPOST_NATURE := 6.0
 const LOCKED_TINT := Color(1, 1, 1, 0.4)
 const SOLAR_PANEL_TEXTURE: Texture2D = preload("res://assets/energy/solar_panel_array.png")
 const FOG_SPRITE_SHEET: Texture2D = preload("res://assets/effects/fog_sprite_sheet.png")
-const REWARD_POP_DURATION := 0.35
-const SOLAR_PANEL_TEXTURE: Texture2D = preload("res://assets/energy/solar_panel_array.png")
-const FOG_SPRITE_SHEET: Texture2D = preload("res://assets/effects/fog_sprite_sheet.png")
-const REWARD_POP_DURATION := 0.35
 const POWER_PLANT_ENERGY_AMOUNT := 12.0
 const SOLAR_PANEL_ENERGY_AMOUNT := 10.0
 const POWER_PLANT_UPGRADE_ACTION_COST := 2
@@ -56,7 +52,6 @@ const CRISIS_TIMES := [20.0, 60.0]
 # Object name -> house task it fulfils when the character reaches it.
 const OBJECT_ACTIONS := {
 	"WaterWell": {"task": "water", "message": "Collect water ({units} units)", "button": "Collect", "done": "Water is already collected for today."},
-	"RecyclingBin": {"task": "recycling", "message": "Recycle your garbage", "button": "Recycle", "done": "You have already recycled today."},
 }
 
 @onready var character = $World/Character
@@ -97,6 +92,7 @@ var _farm_growth_generation := 0
 var _water_tank_unlocked := false
 var _water_tank_used_today := false
 var _composted_today := false
+var _recycled_today := false
 var _power_plant_upgraded := false
 var _energy_collected_today := false
 var actions_left := MAX_ACTIONS
@@ -274,6 +270,7 @@ func _start_next_day() -> void:
 	_farm_harvested_today = false
 	_water_tank_used_today = false
 	_composted_today = false
+	_recycled_today = false
 	_tree_planted_today = false
 	_energy_collected_today = false
 	_todays_crises = _crisis_deck.draw_day()
@@ -367,7 +364,7 @@ func _open_tree_plot(cell: Vector2i) -> void:
 		_pending_tree_cell = cell
 		tree_action_modal.open_action(
 			"plant_tree",
-			"Plant a tree? Cost: 1 action and %d water. Nature +%d." % [
+			"Plant a tree?\nCost: 1 action and %d water\nNature +%d\n\n🌼 A little flower surprise!" % [
 				int(TREE_WATER_COST),
 				int(TREE_NATURE_GAIN),
 			],
@@ -395,7 +392,7 @@ func _on_tree_action_confirmed(action_id: String) -> void:
 	_planted_trees[cell] = {"planted_day": current_day, "matured": false}
 	_tree_planted_today = true
 	_refresh_tree_plot_marker(cell)
-	house_tasks_modal.complete_task("plant_tree")
+	_grant_flower("plant_tree")
 	_mature_tree_after_delay(cell)
 
 
@@ -459,16 +456,12 @@ func _on_action_modal_confirmed(task_id: String) -> void:
 	match task_id:
 		"unlock_water_tank":
 			_unlock_water_tank()
-			return
 		"use_water_tank":
 			_use_water_tank()
-			return
 		"make_compost":
 			_make_compost()
-			return
-	if house_tasks_modal.is_completed(task_id) or not _try_spend_action():
-		return
-	house_tasks_modal.complete_task(task_id)
+		"recycle":
+			_recycle()
 		"power_collect_energy":
 			_collect_power_energy()
 		"power_improve":
@@ -476,9 +469,8 @@ func _on_action_modal_confirmed(task_id: String) -> void:
 		"power_confirm_upgrade":
 			_improve_power_plant()
 		_:
-			if house_tasks_modal.is_completed(task_id) or not _try_spend_action():
-				return
-			house_tasks_modal.complete_task(task_id)
+			if not house_tasks_modal.is_completed(task_id) and _try_spend_action():
+				house_tasks_modal.complete_task(task_id)
 
 
 func _on_object_pressed(button: Control) -> void:
@@ -502,8 +494,12 @@ func _on_character_arrived(target: Node) -> void:
 		return
 	if target != null and target.name == "Compost":
 		_open_compost()
+		return
 	if target == power_plant_button:
 		_open_power_plant_options()
+		return
+	if target != null and target.name == "RecyclingBin":
+		_open_recycling()
 		return
 	if target == null or not OBJECT_ACTIONS.has(target.name):
 		return
@@ -573,6 +569,27 @@ func _make_compost() -> void:
 	var flower := Rewards.random_flower()
 	_plant_reward_flower(flower)
 	reward_modal.open_reward(flower, "you turned your waste into compost")
+
+
+func _open_recycling() -> void:
+	house_tasks_modal.close()
+	if _recycled_today:
+		action_modal.open_action("", "You have already recycled today.")
+	elif actions_left <= 0:
+		action_modal.open_action("", "No actions left today.")
+	else:
+		action_modal.open_action(
+			"recycle",
+			"Recycle your garbage.\n\nCost: 1 action\n\n🌼 A little flower surprise!",
+			"Recycle"
+		)
+
+
+func _recycle() -> void:
+	if _recycled_today or not _try_spend_action():
+		return
+	_recycled_today = true
+	_grant_flower("recycling")
 func _open_power_plant_options() -> void:
 	var energy_amount := SOLAR_PANEL_ENERGY_AMOUNT if _power_plant_upgraded else POWER_PLANT_ENERGY_AMOUNT
 	if _energy_collected_today:
@@ -825,7 +842,16 @@ func _grant_flower(task_id: String) -> void:
 	var task := DayTasks.find_special_task(current_day, task_id)
 	var flower := Rewards.random_flower()
 	_plant_reward_flower(flower)
-	reward_modal.open_reward(flower, task.get("reward_reason", "you completed a special task"))
+	var reason: String = task.get("reward_reason", "")
+	if reason.is_empty():
+		match task_id:
+			"plant_tree":
+				reason = "you planted a tree"
+			"recycling":
+				reason = "you recycled your waste"
+			_:
+				reason = "you completed a special task"
+	reward_modal.open_reward(flower, reason)
 
 
 # Adds the flower to the patch left of the house with a small pop-in.

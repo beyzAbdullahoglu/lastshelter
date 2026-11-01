@@ -12,7 +12,6 @@ const INFO_ICON_SIZE := Vector2(22, 22)
 
 @onready var title_label: Label = %TitleLabel
 @onready var main_task_list: VBoxContainer = %MainTaskList
-@onready var special_task_list: VBoxContainer = %SpecialTaskList
 
 var _day := -1
 var _completed := {}
@@ -47,14 +46,11 @@ func complete_task(task_id: String) -> void:
 
 func _rebuild() -> void:
 	_labels.clear()
-	for list in [main_task_list, special_task_list]:
-		for child in list.get_children():
-			child.queue_free()
+	for child in main_task_list.get_children():
+		child.queue_free()
 
 	for i in DayTasks.MAIN_TASKS.size():
 		main_task_list.add_child(_build_row(DayTasks.MAIN_TASKS[i], false, i + 1))
-	for task in DayTasks.get_special_tasks(_day):
-		special_task_list.add_child(_build_row(task, true))
 
 
 func _build_row(task: Dictionary, is_special: bool, number := 0) -> HBoxContainer:

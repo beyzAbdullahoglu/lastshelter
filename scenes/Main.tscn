@@ -4,7 +4,6 @@
 [ext_resource type="Texture2D" uid="uid://cygwm0b2c0g5k" path="res://assets/water/pond_healthy.png" id="2_0bbpv"]
 [ext_resource type="Texture2D" uid="uid://7kby2xs0sggp" path="res://assets/props/recycling_bins.png" id="2_q8u5g"]
 [ext_resource type="Texture2D" uid="uid://cfi18nw5bk4g2" path="res://assets/tiles/soil_with_grass.png" id="3_3p2gp"]
-[ext_resource type="Texture2D" uid="uid://dlh6kqrt77wrl" path="res://assets/energy/solar_panel_array.png" id="3_lhr70"]
 [ext_resource type="Texture2D" uid="uid://w45wqvjiuaff" path="res://assets/agriculture/compost_station.png" id="7_bjd11"]
 [ext_resource type="Texture2D" uid="uid://bu8bty11nj7sp" path="res://assets/tiles/dirt_tile.png" id="8_cvmbd"]
 [ext_resource type="Texture2D" uid="uid://ddd6mke4v7uql" path="res://assets/water/stone_water_well.png" id="8_qmy6f"]
@@ -18,7 +17,7 @@
 [ext_resource type="PackedScene" path="res://scenes/reward_modal.tscn" id="13_rewardmodal"]
 [ext_resource type="PackedScene" path="res://scenes/crisis_modal.tscn" id="14_crisismodal"]
 [ext_resource type="PackedScene" path="res://scenes/day_modal.tscn" id="15_daymodal"]
-[ext_resource type="Texture2D" path="res://assets/water/blue_water_tank.png" id="16_watertank"]
+[ext_resource type="Texture2D" uid="uid://bdy6tc2clcikt" path="res://assets/water/blue_water_tank.png" id="16_watertank"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mwfav"]
 texture = ExtResource("11_qmy6f")
@@ -198,7 +197,7 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="RewardFlowers" type="Control" parent="World/Decorations" unique_id=96236896]
-layout_mode = 0
+anchors_preset = 0
 offset_left = 402.0
 offset_top = 322.0
 offset_right = 402.0
@@ -342,7 +341,6 @@ offset_right = 24.0
 offset_bottom = 24.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 34
