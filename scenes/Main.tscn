@@ -18,6 +18,10 @@
 [ext_resource type="PackedScene" path="res://scenes/crisis_modal.tscn" id="14_crisismodal"]
 [ext_resource type="PackedScene" path="res://scenes/day_modal.tscn" id="15_daymodal"]
 [ext_resource type="Texture2D" uid="uid://bdy6tc2clcikt" path="res://assets/water/blue_water_tank.png" id="16_watertank"]
+[ext_resource type="Texture2D" uid="uid://ck73pb0uf3exf" path="res://assets/ui_icons/water_icon.png" id="17_water_icon"]
+[ext_resource type="Texture2D" uid="uid://cxjsbqtjp54bd" path="res://assets/ui_icons/wheat_icon.png" id="18_wheat_icon"]
+[ext_resource type="Texture2D" uid="uid://cvc73lk021sik" path="res://assets/ui_icons/energy_icon.png" id="19_energy_icon"]
+[ext_resource type="Texture2D" uid="uid://c2pvc7ygy2xx4" path="res://assets/ui_icons/leafy_vegetable_icon.png" id="20_nature_icon"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mwfav"]
 texture = ExtResource("11_qmy6f")
@@ -77,6 +81,9 @@ corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uea44"]
+content_margin_left = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
 bg_color = Color(0.14901961, 0.23137255, 0.1882353, 1)
 border_width_left = 1
 border_width_top = 1
@@ -381,9 +388,22 @@ layout_mode = 2
 size_flags_horizontal = 3
 alignment = 1
 
-[node name="WaterLabel" type="Label" parent="HUD/TopPanel/Resources/WaterBox" unique_id=66249852]
+[node name="WaterLabelRow" type="HBoxContainer" parent="HUD/TopPanel/Resources/WaterBox" unique_id=568216995]
 layout_mode = 2
-text = "Water"
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="WaterIcon" type="TextureRect" parent="HUD/TopPanel/Resources/WaterBox/WaterLabelRow" unique_id=1641327668]
+custom_minimum_size = Vector2(18, 18)
+layout_mode = 2
+texture = ExtResource("17_water_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="WaterLabel" type="Label" parent="HUD/TopPanel/Resources/WaterBox/WaterLabelRow" unique_id=66249852]
+layout_mode = 2
+text = "WATER"
 
 [node name="WaterBar" type="ProgressBar" parent="HUD/TopPanel/Resources/WaterBox" unique_id=1221849709]
 layout_mode = 2
@@ -394,9 +414,22 @@ value = 65.0
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="FoodLabel" type="Label" parent="HUD/TopPanel/Resources/FoodBox" unique_id=1992033642]
+[node name="FoodLabelRow" type="HBoxContainer" parent="HUD/TopPanel/Resources/FoodBox" unique_id=2004573530]
 layout_mode = 2
-text = "Food"
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="FoodIcon" type="TextureRect" parent="HUD/TopPanel/Resources/FoodBox/FoodLabelRow" unique_id=1993298178]
+custom_minimum_size = Vector2(18, 18)
+layout_mode = 2
+texture = ExtResource("18_wheat_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="FoodLabel" type="Label" parent="HUD/TopPanel/Resources/FoodBox/FoodLabelRow" unique_id=1992033642]
+layout_mode = 2
+text = "FOOD"
 
 [node name="FoodBar" type="ProgressBar" parent="HUD/TopPanel/Resources/FoodBox" unique_id=444369014]
 layout_mode = 2
@@ -407,9 +440,22 @@ value = 60.0
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="EnergyLabel" type="Label" parent="HUD/TopPanel/Resources/EnergyBox" unique_id=1606022071]
+[node name="EnergyLabelRow" type="HBoxContainer" parent="HUD/TopPanel/Resources/EnergyBox" unique_id=1395847612]
 layout_mode = 2
-text = "Energy"
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="EnergyIcon" type="TextureRect" parent="HUD/TopPanel/Resources/EnergyBox/EnergyLabelRow" unique_id=1894818361]
+custom_minimum_size = Vector2(18, 18)
+layout_mode = 2
+texture = ExtResource("19_energy_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="EnergyLabel" type="Label" parent="HUD/TopPanel/Resources/EnergyBox/EnergyLabelRow" unique_id=1606022071]
+layout_mode = 2
+text = "ENERGY"
 
 [node name="EnergyBar" type="ProgressBar" parent="HUD/TopPanel/Resources/EnergyBox" unique_id=1573674724]
 layout_mode = 2
@@ -420,10 +466,23 @@ value = 55.0
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="NatureLabel" type="Label" parent="HUD/TopPanel/Resources/NatureBox" unique_id=1056716530]
+[node name="NatureLabelRow" type="HBoxContainer" parent="HUD/TopPanel/Resources/NatureBox" unique_id=951603614]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="NatureIcon" type="TextureRect" parent="HUD/TopPanel/Resources/NatureBox/NatureLabelRow" unique_id=670601754]
+custom_minimum_size = Vector2(18, 18)
+layout_mode = 2
+texture = ExtResource("20_nature_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="NatureLabel" type="Label" parent="HUD/TopPanel/Resources/NatureBox/NatureLabelRow" unique_id=1056716530]
 layout_mode = 2
 offset_transform_enabled = true
-text = "Nature"
+text = "NATURE"
 
 [node name="NatureBar" type="ProgressBar" parent="HUD/TopPanel/Resources/NatureBox" unique_id=213004381]
 layout_mode = 2
@@ -451,7 +510,7 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 20.0
-offset_top = -126.0
+offset_top = -106.0
 offset_right = -20.0
 offset_bottom = -16.0
 grow_horizontal = 2
@@ -460,19 +519,19 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_bottompanel")
 
 [node name="MarginContainer" type="MarginContainer" parent="HUD/BottomPanel" unique_id=1304861527]
 layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 8
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 6
 
 [node name="MainRow" type="HBoxContainer" parent="HUD/BottomPanel/MarginContainer" unique_id=398330384]
 layout_mode = 2
 theme_override_constants/separation = 14
-alignment = 1
 
 [node name="DayBox" type="PanelContainer" parent="HUD/BottomPanel/MarginContainer/MainRow" unique_id=1718204396]
-custom_minimum_size = Vector2(160, 80)
+custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_childbox")
 
 [node name="VBox" type="VBoxContainer" parent="HUD/BottomPanel/MarginContainer/MainRow/DayBox" unique_id=1409263155]
@@ -494,8 +553,9 @@ text = "DAY 01 / 06"
 horizontal_alignment = 1
 
 [node name="HealthBox" type="PanelContainer" parent="HUD/BottomPanel/MarginContainer/MainRow" unique_id=1590437712]
-custom_minimum_size = Vector2(160, 80)
+custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_childbox")
 
 [node name="VBox" type="VBoxContainer" parent="HUD/BottomPanel/MarginContainer/MainRow/HealthBox" unique_id=2087345561]
@@ -517,8 +577,9 @@ text = "♥️ ♥️ ♥️"
 horizontal_alignment = 1
 
 [node name="ActionBox" type="PanelContainer" parent="HUD/BottomPanel/MarginContainer/MainRow" unique_id=943817260]
-custom_minimum_size = Vector2(200, 80)
+custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_childbox")
 
 [node name="VBox" type="VBoxContainer" parent="HUD/BottomPanel/MarginContainer/MainRow/ActionBox" unique_id=1275509834]
