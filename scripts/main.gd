@@ -15,11 +15,11 @@ const RESOURCE_GAIN_SOUND: AudioStream = preload("res://audio/resource_gain.wav"
 const NEW_TREASURE_SOUND: AudioStream = preload("res://audio/new_treasure.wav")
 const DAY_START_SOUND: AudioStream = preload("res://audio/day_start.wav")
 const REWARD_FLOWER_SIZE := Vector2(56, 56)
-# Flowers line up parallel to the house's left wall (2:1 isometric, running down-right);
-# a full row continues in a new row one step further out from the wall (down-left).
+# Flowers line up parallel to the house's front (door) wall (2:1 isometric, running up-right);
+# a full row continues in a new row one step further out from the wall (down-right).
 const REWARD_FLOWERS_PER_ROW := 5
-const REWARD_FLOWER_STEP := Vector2(34, 17)
-const REWARD_ROW_STEP := Vector2(-34, 17)
+const REWARD_FLOWER_STEP := Vector2(34, -17)
+const REWARD_ROW_STEP := Vector2(34, 17)
 const REWARD_POP_DURATION := 0.35
 const TREE_WATER_COST := 5.0
 const TREE_NATURE_GAIN := 6.0
@@ -975,7 +975,7 @@ func _grant_flower(task_id: String) -> void:
 	reward_modal.open_reward(flower, reason)
 
 
-# Adds the flower to the patch left of the house with a small pop-in.
+# Adds the flower to the patch in front of the house with a small pop-in.
 func _plant_reward_flower(flower: Dictionary) -> void:
 	var sprite := TextureRect.new()
 	sprite.texture = flower.texture
