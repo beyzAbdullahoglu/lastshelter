@@ -10,7 +10,12 @@ const FARM_GROWING_TEXTURE: Texture2D = preload("res://assets/agriculture/growin
 const FARM_WATERED_TEXTURE: Texture2D = preload("res://assets/agriculture/watered.png")
 const TREE_GROWING_TEXTURE: Texture2D = preload("res://assets/nature/tree_sapling.png")
 const TREE_HEALTHY_TEXTURE: Texture2D = preload("res://assets/nature/tree_healthy.png")
-const REWARD_FLOWER_SIZE := Vector2(44, 44)
+const REWARD_FLOWER_SIZE := Vector2(56, 56)
+# Flowers line up parallel to the house's left wall (2:1 isometric, running down-right);
+# a full row continues in a new row one step further out from the wall (down-left).
+const REWARD_FLOWERS_PER_ROW := 5
+const REWARD_FLOWER_STEP := Vector2(34, 17)
+const REWARD_ROW_STEP := Vector2(-34, 17)
 const REWARD_POP_DURATION := 0.35
 const TREE_WATER_COST := 5.0
 const TREE_NATURE_GAIN := 6.0
@@ -65,7 +70,7 @@ const OBJECT_ACTIONS := {
 @onready var reward_modal = $RewardModal
 @onready var crisis_modal = $CrisisModal
 @onready var day_modal = $DayModal
-@onready var reward_flowers: HFlowContainer = $World/Decorations/RewardFlowers
+@onready var reward_flowers: Control = $World/Decorations/RewardFlowers
 @onready var energy_bar: ProgressBar = $HUD/TopPanel/Resources/EnergyBox/EnergyBar
 @onready var nature_bar: ProgressBar = $HUD/TopPanel/Resources/NatureBox/NatureBar
 @onready var day_label: Label = $HUD/BottomPanel/MarginContainer/MainRow/DayBox/VBox/DayLabel
@@ -711,6 +716,10 @@ func _plant_reward_flower(flower: Dictionary) -> void:
 	sprite.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	sprite.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	sprite.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	sprite.size = REWARD_FLOWER_SIZE
+	var index := reward_flowers.get_child_count()
+	sprite.position = REWARD_FLOWER_STEP * (index % REWARD_FLOWERS_PER_ROW) \
+		+ REWARD_ROW_STEP * floori(float(index) / REWARD_FLOWERS_PER_ROW)
 	sprite.pivot_offset = REWARD_FLOWER_SIZE / 2
 	sprite.scale = Vector2.ZERO
 	reward_flowers.add_child(sprite)

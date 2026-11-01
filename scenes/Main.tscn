@@ -140,18 +140,6 @@ corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nextdaynormal"]
-bg_color = Color(0.47058824, 0.60784316, 0.40784314, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.3254902, 0.40784314, 0.3529412, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-
 [node name="Main" type="Control" unique_id=1669467788]
 layout_mode = 3
 anchors_preset = 15
@@ -208,16 +196,13 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="RewardFlowers" type="HFlowContainer" parent="World/Decorations" unique_id=96236896]
+[node name="RewardFlowers" type="Control" parent="World/Decorations" unique_id=96236896]
 layout_mode = 0
-offset_left = 370.0
-offset_top = 340.0
-offset_right = 470.0
-offset_bottom = 460.0
+offset_left = 402.0
+offset_top = 322.0
+offset_right = 402.0
+offset_bottom = 322.0
 mouse_filter = 2
-theme_override_constants/h_separation = 4
-theme_override_constants/v_separation = 2
-alignment = 2
 
 [node name="InteractiveObjects" type="Control" parent="World" unique_id=1734855299]
 anchors_preset = 0
@@ -554,20 +539,6 @@ theme_override_colors/font_color = Color(0.9529412, 0.8352941, 0.5411765, 1)
 theme_override_font_sizes/font_size = 23
 text = "3 / 3"
 horizontal_alignment = 1
-
-[node name="Spacer" type="Control" parent="HUD/BottomPanel/MarginContainer/MainRow" unique_id=1836502917]
-layout_mode = 2
-size_flags_horizontal = 3
-mouse_filter = 2
-
-[node name="NextDayButton" type="Button" parent="HUD/BottomPanel/MarginContainer/MainRow" unique_id=560515883]
-custom_minimum_size = Vector2(180, 58)
-layout_mode = 2
-size_flags_vertical = 4
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = SubResource("StyleBoxFlat_nextdaynormal")
-text = "END DAY →"
 
 [node name="RewardModal" parent="." unique_id=1394249451 instance=ExtResource("13_rewardmodal")]
 layout_mode = 1
