@@ -10,6 +10,11 @@ const FARM_GROWING_TEXTURE: Texture2D = preload("res://assets/agriculture/growin
 const FARM_WATERED_TEXTURE: Texture2D = preload("res://assets/agriculture/watered.png")
 const REWARD_FLOWER_SIZE := Vector2(44, 44)
 const REWARD_POP_DURATION := 0.35
+const WATER_TANK_WATER := 10.0
+const COMPOST_FOOD := 5.0
+const COMPOST_NATURE := 6.0
+# Locked buildings are drawn faded with a lock badge; self_modulate keeps the badge opaque.
+const LOCKED_TINT := Color(1, 1, 1, 0.4)
 
 const TOTAL_DAYS := 6
 const DAY_DURATION := 90.0
@@ -39,6 +44,8 @@ const OBJECT_ACTIONS := {
 @onready var farm_action_modal = $FarmActionModal
 @onready var farm_button: TextureButton = $World/InteractiveObjects/Farm
 @onready var farm_timer_label: Label = $World/InteractiveObjects/Farm/FarmTimer
+@onready var water_tank_button: TextureButton = $World/InteractiveObjects/WaterTank
+@onready var water_tank_lock: Label = $World/InteractiveObjects/WaterTank/LockIcon
 @onready var water_bar: ProgressBar = $HUD/TopPanel/Resources/WaterBox/WaterBar
 @onready var food_bar: ProgressBar = $HUD/TopPanel/Resources/FoodBox/FoodBar
 @onready var reward_modal = $RewardModal
@@ -58,6 +65,9 @@ var _farm_is_ready := false
 var _farm_irrigated_today := false
 var _farm_harvested_today := false
 var _farm_growth_generation := 0
+var _water_tank_unlocked := false
+var _water_tank_used_today := false
+var _composted_today := false
 var actions_left := MAX_ACTIONS
 var _day_elapsed := 0.0
 var hearts := MAX_HEARTS
@@ -82,6 +92,7 @@ func _ready() -> void:
 	action_modal.confirmed.connect(_on_action_modal_confirmed)
 	farm_action_modal.confirmed.connect(_on_farm_option_selected)
 	_reset_farm()
+	_refresh_water_tank()
 	crisis_modal.choice_made.connect(_on_crisis_choice_made)
 	crisis_modal.resolved.connect(_on_crisis_resolved)
 	_todays_crises = _crisis_deck.draw_day()
@@ -219,6 +230,8 @@ func _start_next_day() -> void:
 	actions_left = MAX_ACTIONS
 	_farm_irrigated_today = false
 	_farm_harvested_today = false
+	_water_tank_used_today = false
+	_composted_today = false
 	_todays_crises = _crisis_deck.draw_day()
 	house_tasks_modal.set_day(current_day)
 	house_task_pin.show()
@@ -250,6 +263,16 @@ func _try_spend_action() -> bool:
 
 
 func _on_action_modal_confirmed(task_id: String) -> void:
+	match task_id:
+		"unlock_water_tank":
+			_unlock_water_tank()
+			return
+		"use_water_tank":
+			_use_water_tank()
+			return
+		"make_compost":
+			_make_compost()
+			return
 	if house_tasks_modal.is_completed(task_id) or not _try_spend_action():
 		return
 	house_tasks_modal.complete_task(task_id)
@@ -268,6 +291,12 @@ func _on_character_arrived(target: Node) -> void:
 	if target != null and target.name == "Farm":
 		_open_farm_options()
 		return
+	if target != null and target.name == "WaterTank":
+		_open_water_tank()
+		return
+	if target != null and target.name == "Compost":
+		_open_compost()
+		return
 	if target == null or not OBJECT_ACTIONS.has(target.name):
 		return
 
@@ -279,6 +308,63 @@ func _on_character_arrived(target: Node) -> void:
 		action_modal.open_action(action.task, "No actions left today.")
 	else:
 		action_modal.open_action(action.task, action.message.format({"units": DayTasks.MAIN_TASK_REQUIRED}), action.button)
+
+
+# Unlocking costs one action (once); afterwards the tank gives free water once per day.
+func _open_water_tank() -> void:
+	house_tasks_modal.close()
+	if not _water_tank_unlocked:
+		if actions_left <= 0:
+			action_modal.open_action("", "Blue Water Tank\nUnlock requires 1 action.\nNo actions left today.")
+		else:
+			action_modal.open_action("unlock_water_tank", "Blue Water Tank\nUnlock requires 1 action.", "Unlock")
+	elif _water_tank_used_today:
+		action_modal.open_action("", "Blue Water Tank\nYou have already used the water tank today.")
+	else:
+		action_modal.open_action("use_water_tank", "Blue Water Tank\nCollect %d water." % WATER_TANK_WATER, "Collect")
+
+
+func _unlock_water_tank() -> void:
+	if _water_tank_unlocked or not _try_spend_action():
+		return
+	_water_tank_unlocked = true
+	_refresh_water_tank()
+
+
+func _use_water_tank() -> void:
+	if not _water_tank_unlocked or _water_tank_used_today:
+		return
+	_water_tank_used_today = true
+	_apply_resource_changes(WATER_TANK_WATER, 0, 0, 0)
+
+
+func _refresh_water_tank() -> void:
+	water_tank_button.self_modulate = Color.WHITE if _water_tank_unlocked else LOCKED_TINT
+	water_tank_lock.visible = not _water_tank_unlocked
+
+
+func _open_compost() -> void:
+	house_tasks_modal.close()
+	if _composted_today:
+		action_modal.open_action("", "Compost\nYou have already made compost today.")
+	elif actions_left <= 0:
+		action_modal.open_action("", "Compost\nNo actions left today.")
+	else:
+		action_modal.open_action(
+			"make_compost",
+			"Compost\nSeparate the waste and turn it into compost.\n\nCost: 1 action\nGain: Food +%d, Nature +%d and a flower" % [COMPOST_FOOD, COMPOST_NATURE],
+			"Make compost"
+		)
+
+
+func _make_compost() -> void:
+	if _composted_today or not _try_spend_action():
+		return
+	_composted_today = true
+	_apply_resource_changes(0, COMPOST_FOOD, 0, COMPOST_NATURE)
+	var flower := Rewards.random_flower()
+	_plant_reward_flower(flower)
+	reward_modal.open_reward(flower, "you turned your waste into compost")
 
 
 func _open_farm_options() -> void:
