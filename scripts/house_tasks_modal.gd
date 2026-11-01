@@ -101,8 +101,9 @@ func _refresh_row(task_id: String) -> void:
 	if entry.special:
 		entry.label.text = "%s %s" % ["●" if done else "○", entry.task.text]
 	else:
-		var progress := DayTasks.MAIN_TASK_REQUIRED if done else 0
-		entry.label.text = "%d. %s (%d/%d)" % [entry.number, entry.task.text, progress, DayTasks.MAIN_TASK_REQUIRED]
+		var required: int = entry.task.get("required", DayTasks.MAIN_TASK_REQUIRED)
+		var progress := required if done else 0
+		entry.label.text = "%d. %s (%d/%d)" % [entry.number, entry.task.text, progress, required]
 
 	entry.status.text = DONE_ICON if done else PENDING_ICON
 	entry.status.add_theme_color_override("font_color", DONE_COLOR if done else PENDING_COLOR)

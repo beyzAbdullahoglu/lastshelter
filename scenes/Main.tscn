@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://k4a1a6b4p2ef" path="res://assets/tiles/grass_tile_166x127.png" id="11_qmy6f"]
 [ext_resource type="PackedScene" path="res://scenes/house_tasks_modal.tscn" id="11_taskmodal"]
 [ext_resource type="PackedScene" path="res://scenes/action_modal.tscn" id="12_actionmodal"]
+[ext_resource type="Texture2D" uid="uid://jfm6uqplsi43" path="res://assets/buildings/industrial_factory.png" id="12_bb450"]
 [ext_resource type="Texture2D" uid="uid://cqjuj2ch5cccx" path="res://assets/agriculture/empty.png" id="13_farm_empty"]
 [ext_resource type="PackedScene" path="res://scenes/reward_modal.tscn" id="13_rewardmodal"]
 [ext_resource type="PackedScene" path="res://scenes/crisis_modal.tscn" id="14_crisismodal"]
@@ -226,16 +227,6 @@ offset_bottom = 40.0
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="SolarPanel" type="TextureButton" parent="World/InteractiveObjects" unique_id=1161615277]
-layout_mode = 0
-offset_left = 820.0
-offset_top = 108.0
-offset_right = 1020.0
-offset_bottom = 258.0
-texture_normal = ExtResource("3_lhr70")
-ignore_texture_size = true
-stretch_mode = 5
-
 [node name="House" type="TextureButton" parent="World/InteractiveObjects" unique_id=948986070]
 layout_mode = 0
 offset_left = 437.0
@@ -315,6 +306,16 @@ offset_top = 284.0
 offset_right = 1199.0
 offset_bottom = 434.0
 texture_normal = ExtResource("8_qmy6f")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="PowerPlant" type="TextureButton" parent="World/InteractiveObjects" unique_id=1401835589]
+layout_mode = 0
+offset_left = 626.0
+offset_top = -7.0
+offset_right = 926.0
+offset_bottom = 253.0
+texture_normal = ExtResource("12_bb450")
 ignore_texture_size = true
 stretch_mode = 5
 

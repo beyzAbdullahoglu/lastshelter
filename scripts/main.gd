@@ -29,6 +29,13 @@ const COMPOST_FOOD := 5.0
 const COMPOST_NATURE := 6.0
 # Locked buildings are drawn faded with a lock badge; self_modulate keeps the badge opaque.
 const LOCKED_TINT := Color(1, 1, 1, 0.4)
+const SOLAR_PANEL_TEXTURE: Texture2D = preload("res://assets/energy/solar_panel_array.png")
+const FOG_SPRITE_SHEET: Texture2D = preload("res://assets/effects/fog_sprite_sheet.png")
+const REWARD_POP_DURATION := 0.35
+const POWER_PLANT_ENERGY_AMOUNT := 12.0
+const SOLAR_PANEL_ENERGY_AMOUNT := 10.0
+const POWER_PLANT_UPGRADE_ACTION_COST := 2
+const POWER_PLANT_NATURE_COST := 10.0
 
 const TOTAL_DAYS := 6
 const DAY_DURATION := 90.0
@@ -45,7 +52,6 @@ const CRISIS_TIMES := [20.0, 60.0]
 
 # Object name -> house task it fulfils when the character reaches it.
 const OBJECT_ACTIONS := {
-	"SolarPanel": {"task": "energy", "message": "Collect energy ({units} units)", "button": "Collect", "done": "Energy is already collected for today."},
 	"WaterWell": {"task": "water", "message": "Collect water ({units} units)", "button": "Collect", "done": "Water is already collected for today."},
 	"RecyclingBin": {"task": "recycling", "message": "Recycle your garbage", "button": "Recycle", "done": "You have already recycled today."},
 }
@@ -65,6 +71,7 @@ const OBJECT_ACTIONS := {
 @onready var farm_timer_label: Label = $World/InteractiveObjects/Farm/FarmTimer
 @onready var water_tank_button: TextureButton = $World/InteractiveObjects/WaterTank
 @onready var water_tank_lock: Label = $World/InteractiveObjects/WaterTank/LockIcon
+@onready var power_plant_button: TextureButton = $World/InteractiveObjects/PowerPlant
 @onready var water_bar: ProgressBar = $HUD/TopPanel/Resources/WaterBox/WaterBar
 @onready var food_bar: ProgressBar = $HUD/TopPanel/Resources/FoodBox/FoodBar
 @onready var reward_modal = $RewardModal
@@ -87,6 +94,8 @@ var _farm_growth_generation := 0
 var _water_tank_unlocked := false
 var _water_tank_used_today := false
 var _composted_today := false
+var _power_plant_upgraded := false
+var _energy_collected_today := false
 var actions_left := MAX_ACTIONS
 var _day_elapsed := 0.0
 var hearts := MAX_HEARTS
@@ -119,6 +128,7 @@ func _ready() -> void:
 	_create_tree_plot_markers()
 	_reset_farm()
 	_refresh_water_tank()
+	_apply_power_plant_nature_cost()
 	crisis_modal.choice_made.connect(_on_crisis_choice_made)
 	crisis_modal.resolved.connect(_on_crisis_resolved)
 	_todays_crises = _crisis_deck.draw_day()
@@ -222,6 +232,8 @@ func _begin_next_day() -> void:
 	var parts := PackedStringArray()
 	for key in renewal:
 		parts.append("%s +%s" % [key.capitalize(), String.num(renewal[key])])
+	if not _power_plant_upgraded:
+		parts.append("Power plant: Nature -10")
 	day_modal.open_message(
 		"Day %d is starting" % current_day,
 		"Resources are being renewed:\n%s" % "   ".join(parts),
@@ -239,6 +251,7 @@ func _renew_resources() -> Dictionary:
 	var bars := _resource_bars()
 	for key in renewal:
 		bars[key].value += renewal[key]
+	_apply_power_plant_nature_cost()
 	return renewal
 
 
@@ -259,6 +272,7 @@ func _start_next_day() -> void:
 	_water_tank_used_today = false
 	_composted_today = false
 	_tree_planted_today = false
+	_energy_collected_today = false
 	_todays_crises = _crisis_deck.draw_day()
 	house_tasks_modal.set_day(current_day)
 	house_task_pin.show()
@@ -452,6 +466,16 @@ func _on_action_modal_confirmed(task_id: String) -> void:
 	if house_tasks_modal.is_completed(task_id) or not _try_spend_action():
 		return
 	house_tasks_modal.complete_task(task_id)
+		"power_collect_energy":
+			_collect_power_energy()
+		"power_improve":
+			_confirm_power_plant_upgrade()
+		"power_confirm_upgrade":
+			_improve_power_plant()
+		_:
+			if house_tasks_modal.is_completed(task_id) or not _try_spend_action():
+				return
+			house_tasks_modal.complete_task(task_id)
 
 
 func _on_object_pressed(button: Control) -> void:
@@ -475,6 +499,8 @@ func _on_character_arrived(target: Node) -> void:
 		return
 	if target != null and target.name == "Compost":
 		_open_compost()
+	if target == power_plant_button:
+		_open_power_plant_options()
 		return
 	if target == null or not OBJECT_ACTIONS.has(target.name):
 		return
@@ -544,6 +570,100 @@ func _make_compost() -> void:
 	var flower := Rewards.random_flower()
 	_plant_reward_flower(flower)
 	reward_modal.open_reward(flower, "you turned your waste into compost")
+func _open_power_plant_options() -> void:
+	var energy_amount := SOLAR_PANEL_ENERGY_AMOUNT if _power_plant_upgraded else POWER_PLANT_ENERGY_AMOUNT
+	if _energy_collected_today:
+		if not _power_plant_upgraded and actions_left >= POWER_PLANT_UPGRADE_ACTION_COST:
+			action_modal.open_action("power_improve", "Energy is already collected today.", "🍃 Improve")
+		elif not _power_plant_upgraded:
+			action_modal.open_action("", "Energy is already collected today. Switching to solar requires 2 actions 💪.")
+		else:
+			action_modal.open_action("", "Energy is already collected today.")
+		return
+	if actions_left <= 0:
+		action_modal.open_action("", "No actions left today.")
+		return
+	if _power_plant_upgraded:
+		action_modal.open_action("power_collect_energy", "Collect energy (%d units)" % int(energy_amount), "Collect")
+	elif actions_left < POWER_PLANT_UPGRADE_ACTION_COST:
+		action_modal.open_action("power_collect_energy", "Collect energy (%d units)" % int(energy_amount), "Collect")
+	else:
+		action_modal.open_choices(
+			"Choose an action",
+			"power_collect_energy",
+			"Collect energy (%d units)" % int(energy_amount),
+			"power_improve",
+			"🍃 Improve"
+		)
+
+
+func _power_plant_upgrade_prompt() -> String:
+	return "Switch to solar power?\nCost: 2 actions 💪\nEnergy: 10 units"
+
+
+func _confirm_power_plant_upgrade() -> void:
+	if _power_plant_upgraded:
+		return
+	if actions_left < POWER_PLANT_UPGRADE_ACTION_COST:
+		action_modal.open_action("", "Switching to solar power requires 2 actions 💪.")
+		return
+	action_modal.open_action("power_confirm_upgrade", _power_plant_upgrade_prompt(), "OK")
+
+
+func _collect_power_energy() -> void:
+	if _energy_collected_today or not _try_spend_action():
+		return
+	_energy_collected_today = true
+	energy_bar.value += SOLAR_PANEL_ENERGY_AMOUNT if _power_plant_upgraded else POWER_PLANT_ENERGY_AMOUNT
+	if not house_tasks_modal.is_completed("energy"):
+		house_tasks_modal.complete_task("energy")
+
+
+func _improve_power_plant() -> void:
+	if _power_plant_upgraded or actions_left < POWER_PLANT_UPGRADE_ACTION_COST:
+		return
+	actions_left -= POWER_PLANT_UPGRADE_ACTION_COST
+	_refresh_day_hud()
+	_power_plant_upgraded = true
+	power_plant_button.texture_normal = SOLAR_PANEL_TEXTURE
+	power_plant_button.texture_hover = SOLAR_PANEL_TEXTURE
+	power_plant_button.texture_pressed = SOLAR_PANEL_TEXTURE
+	_play_power_plant_construction_effect()
+	action_modal.open_action(
+		"",
+		"Congratulations! Your shelter now runs on renewable solar power, helping protect the natural world."
+	)
+
+
+func _play_power_plant_construction_effect() -> void:
+	var sprite_frames := SpriteFrames.new()
+	sprite_frames.add_animation("construction")
+	sprite_frames.set_animation_speed("construction", 8.0)
+	sprite_frames.set_animation_loop("construction", false)
+	var sheet_size := FOG_SPRITE_SHEET.get_size()
+	var frame_width := sheet_size.x / 2.0
+	for playback_index in 4:
+		var frame_index := playback_index % 2
+		var frame_texture := AtlasTexture.new()
+		frame_texture.atlas = FOG_SPRITE_SHEET
+		frame_texture.region = Rect2(frame_index * frame_width, 0.0, frame_width, sheet_size.y)
+		sprite_frames.add_frame("construction", frame_texture)
+
+	var smoke := AnimatedSprite2D.new()
+	smoke.sprite_frames = sprite_frames
+	smoke.animation = "construction"
+	smoke.scale = Vector2(power_plant_button.size.x / frame_width, power_plant_button.size.y / sheet_size.y) * 2.0
+	smoke.position = power_plant_button.position + power_plant_button.size / 2.0
+	smoke.animation_finished.connect(smoke.queue_free)
+	var plant_index := power_plant_button.get_index()
+	interactive_objects.add_child(smoke)
+	interactive_objects.move_child(smoke, plant_index + 1)
+	smoke.play()
+
+
+func _apply_power_plant_nature_cost() -> void:
+	if not _power_plant_upgraded:
+		nature_bar.value -= POWER_PLANT_NATURE_COST
 
 
 func _open_farm_options() -> void:
@@ -688,9 +808,6 @@ func _start_pin_bob() -> void:
 func _on_house_task_completed(task_id: String, is_special: bool) -> void:
 	# TODO: remaining per-task effects to be specified.
 	match task_id:
-		"energy":
-			# Collected energy is spent from the global energy resource.
-			energy_bar.value -= DayTasks.MAIN_TASK_REQUIRED
 		"water":
 			# Collected water is spent from the global water resource.
 			water_bar.value -= DayTasks.MAIN_TASK_REQUIRED
