@@ -27,6 +27,7 @@ const TREE_VERTICAL_OFFSET := -12.0
 const WATER_TANK_WATER := 10.0
 const COMPOST_FOOD := 5.0
 const COMPOST_NATURE := 6.0
+const RECYCLING_NATURE_GAIN := 5.0
 # Locked buildings are drawn faded with a lock badge; self_modulate keeps the badge opaque.
 const LOCKED_TINT := Color(1, 1, 1, 0.4)
 const SOLAR_PANEL_TEXTURE: Texture2D = preload("res://assets/energy/solar_panel_array.png")
@@ -580,7 +581,7 @@ func _open_recycling() -> void:
 	else:
 		action_modal.open_action(
 			"recycle",
-			"Recycle your garbage.\n\nCost: 1 action\n\n🌼 A little flower surprise!",
+			"Recycle your garbage.\n\nCost: 1 action\nNature +%d\n\n🌼 A little flower surprise!" % int(RECYCLING_NATURE_GAIN),
 			"Recycle"
 		)
 
@@ -589,6 +590,7 @@ func _recycle() -> void:
 	if _recycled_today or not _try_spend_action():
 		return
 	_recycled_today = true
+	_apply_resource_changes(0, 0, 0, RECYCLING_NATURE_GAIN)
 	_grant_flower("recycling")
 func _open_power_plant_options() -> void:
 	var energy_amount := SOLAR_PANEL_ENERGY_AMOUNT if _power_plant_upgraded else POWER_PLANT_ENERGY_AMOUNT
