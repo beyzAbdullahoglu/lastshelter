@@ -8,8 +8,17 @@ const DRIP_IRRIGATION_WATER_COST := 8.0
 const FARM_EMPTY_TEXTURE: Texture2D = preload("res://assets/agriculture/empty.png")
 const FARM_GROWING_TEXTURE: Texture2D = preload("res://assets/agriculture/growing.png")
 const FARM_WATERED_TEXTURE: Texture2D = preload("res://assets/agriculture/watered.png")
+const TREE_GROWING_TEXTURE: Texture2D = preload("res://assets/nature/tree_sapling.png")
+const TREE_HEALTHY_TEXTURE: Texture2D = preload("res://assets/nature/tree_healthy.png")
 const REWARD_FLOWER_SIZE := Vector2(44, 44)
 const REWARD_POP_DURATION := 0.35
+const TREE_WATER_COST := 5.0
+const TREE_NATURE_GAIN := 6.0
+const MATURE_TREE_NATURE_GAIN := 4.0
+const TREE_MATURITY_SECONDS := 10.0
+const TREE_TILE_SCALE := 1.25
+const TREE_GROWING_SCALE := 0.9
+const TREE_VERTICAL_OFFSET := -12.0
 
 const TOTAL_DAYS := 6
 const DAY_DURATION := 90.0
@@ -33,10 +42,15 @@ const OBJECT_ACTIONS := {
 
 @onready var character = $World/Character
 @onready var interactive_objects: Control = $World/InteractiveObjects
+@onready var world: Control = $World
+@onready var ground: Node2D = $World/Ground
+@onready var tree_plot_layer: TileMapLayer = $World/Ground/dirt
+@onready var dirt_grass_layer: TileMapLayer = $World/Ground/dirtGrass
 @onready var house_task_pin: Button = $World/InteractiveObjects/House/HouseTaskPin
 @onready var house_tasks_modal = $HouseTasksModal
 @onready var action_modal = $ActionModal
 @onready var farm_action_modal = $FarmActionModal
+@onready var tree_action_modal = $TreeActionModal
 @onready var farm_button: TextureButton = $World/InteractiveObjects/Farm
 @onready var farm_timer_label: Label = $World/InteractiveObjects/Farm/FarmTimer
 @onready var water_bar: ProgressBar = $HUD/TopPanel/Resources/WaterBox/WaterBar
@@ -67,6 +81,11 @@ var _crisis_deck := CrisisDeck.new()
 var _todays_crises: Array = []
 # Day -> multiplier on that day's water growth (set by drought crises).
 var _water_growth_factors := {}
+var _tree_plot_markers: Dictionary = {}
+var _tree_sprites: Dictionary = {}
+var _planted_trees: Dictionary = {}
+var _pending_tree_cell := Vector2i(-1, -1)
+var _tree_planted_today := false
 
 
 func _ready() -> void:
@@ -81,6 +100,8 @@ func _ready() -> void:
 	house_tasks_modal.all_tasks_completed.connect(house_task_pin.hide)
 	action_modal.confirmed.connect(_on_action_modal_confirmed)
 	farm_action_modal.confirmed.connect(_on_farm_option_selected)
+	tree_action_modal.confirmed.connect(_on_tree_action_confirmed)
+	_create_tree_plot_markers()
 	_reset_farm()
 	crisis_modal.choice_made.connect(_on_crisis_choice_made)
 	crisis_modal.resolved.connect(_on_crisis_resolved)
@@ -219,6 +240,7 @@ func _start_next_day() -> void:
 	actions_left = MAX_ACTIONS
 	_farm_irrigated_today = false
 	_farm_harvested_today = false
+	_tree_planted_today = false
 	_todays_crises = _crisis_deck.draw_day()
 	house_tasks_modal.set_day(current_day)
 	house_task_pin.show()
@@ -249,6 +271,155 @@ func _try_spend_action() -> bool:
 	return true
 
 
+func _on_tree_plot_marker_pressed(cell: Vector2i) -> void:
+	var target := tree_plot_layer.to_global(tree_plot_layer.map_to_local(cell)) + Vector2(0, 40)
+	character.move_to(target, _tree_plot_markers[cell])
+
+
+func _create_tree_plot_markers() -> void:
+	for cell in tree_plot_layer.get_used_cells():
+		var marker := Button.new()
+		marker.custom_minimum_size = Vector2(44, 44)
+		marker.size = marker.custom_minimum_size
+		marker.text = "＋"
+		marker.add_theme_font_size_override("font_size", 22)
+		marker.add_theme_stylebox_override("normal", _make_tree_marker_style())
+		marker.add_theme_stylebox_override("hover", _make_tree_marker_style())
+		marker.add_theme_stylebox_override("pressed", _make_tree_marker_style())
+		marker.mouse_filter = Control.MOUSE_FILTER_STOP
+		marker.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		marker.tooltip_text = "Tree planting plot"
+		marker.set_meta("tree_plot_cell", cell)
+		marker.pressed.connect(_on_tree_plot_marker_pressed.bind(cell))
+
+		var world_position: Vector2 = world.get_global_transform().affine_inverse() * tree_plot_layer.to_global(tree_plot_layer.map_to_local(cell))
+		marker.position = world_position - marker.size / 2.0
+		world.add_child(marker)
+		_tree_plot_markers[cell] = marker
+
+		var tree_sprite := Sprite2D.new()
+		tree_sprite.name = "Tree_%d_%d" % [cell.x, cell.y]
+		tree_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		tree_sprite.centered = true
+		tree_sprite.position = ground.to_local(tree_plot_layer.to_global(tree_plot_layer.map_to_local(cell))) + Vector2(0, TREE_VERTICAL_OFFSET)
+		tree_sprite.visible = false
+		ground.add_child(tree_sprite)
+		_tree_sprites[cell] = tree_sprite
+
+
+func _make_tree_marker_style() -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.15, 0.28, 0.17, 0.9)
+	style.border_color = Color(0.72, 0.84, 0.48, 1.0)
+	style.set_border_width_all(2)
+	style.set_corner_radius_all(22)
+	return style
+
+
+func _open_tree_plot(cell: Vector2i) -> void:
+	if _planted_trees.has(cell):
+		tree_action_modal.open_action("", "A tree is already planted here.")
+	elif _tree_planted_today:
+		tree_action_modal.open_action("", "You can only plant one tree per day.")
+	elif actions_left <= 0:
+		tree_action_modal.open_action("", "No actions left today.")
+	elif water_bar.value < TREE_WATER_COST:
+		tree_action_modal.open_action(
+			"",
+			"Not enough water. Planting needs %d water." % int(TREE_WATER_COST)
+		)
+	else:
+		_pending_tree_cell = cell
+		tree_action_modal.open_action(
+			"plant_tree",
+			"Plant a tree? Cost: 1 action and %d water. Nature +%d." % [
+				int(TREE_WATER_COST),
+				int(TREE_NATURE_GAIN),
+			],
+			"Plant a tree"
+		)
+
+
+func _on_tree_action_confirmed(action_id: String) -> void:
+	if action_id != "plant_tree":
+		return
+	var cell := _pending_tree_cell
+	_pending_tree_cell = Vector2i(-1, -1)
+	if not _tree_plot_markers.has(cell) or _planted_trees.has(cell):
+		return
+	if _tree_planted_today:
+		_open_tree_plot(cell)
+		return
+	if water_bar.value < TREE_WATER_COST or actions_left <= 0:
+		_open_tree_plot(cell)
+		return
+	if not _try_spend_action():
+		return
+
+	_apply_resource_changes(-TREE_WATER_COST, 0, 0, TREE_NATURE_GAIN)
+	_planted_trees[cell] = {"planted_day": current_day, "matured": false}
+	_tree_planted_today = true
+	_refresh_tree_plot_marker(cell)
+	house_tasks_modal.complete_task("plant_tree")
+	_mature_tree_after_delay(cell)
+
+
+func _mature_tree_after_delay(cell: Vector2i) -> void:
+	await get_tree().create_timer(TREE_MATURITY_SECONDS).timeout
+	if not is_inside_tree() or not _planted_trees.has(cell):
+		return
+
+	var tree: Dictionary = _planted_trees[cell]
+	if tree.matured:
+		return
+	tree.matured = true
+	_planted_trees[cell] = tree
+	nature_bar.value += MATURE_TREE_NATURE_GAIN
+	_refresh_tree_plot_marker(cell)
+
+
+func _refresh_tree_plot_marker(cell: Vector2i) -> void:
+	var marker: Button = _tree_plot_markers[cell]
+	var tree_sprite: Sprite2D = _tree_sprites[cell]
+	var tree: Dictionary = _planted_trees.get(cell, {})
+	if tree.is_empty():
+		marker.text = "＋"
+		marker.add_theme_stylebox_override("normal", _make_tree_marker_style())
+		marker.add_theme_stylebox_override("hover", _make_tree_marker_style())
+		marker.add_theme_stylebox_override("pressed", _make_tree_marker_style())
+		tree_sprite.texture = null
+		tree_sprite.hide()
+		marker.tooltip_text = "Tree planting plot"
+	elif tree.matured:
+		marker.text = ""
+		_set_tree_sprite_texture(tree_sprite, TREE_HEALTHY_TEXTURE)
+		_hide_tree_plot_marker_style(marker)
+		marker.tooltip_text = "Mature tree"
+	else:
+		marker.text = ""
+		_set_tree_sprite_texture(tree_sprite, TREE_GROWING_TEXTURE)
+		tree_sprite.scale *= TREE_GROWING_SCALE
+		_hide_tree_plot_marker_style(marker)
+		marker.tooltip_text = "Growing tree"
+
+
+func _set_tree_sprite_texture(tree_sprite: Sprite2D, texture: Texture2D) -> void:
+	tree_sprite.texture = texture
+	var tile_size := Vector2(tree_plot_layer.tile_set.tile_size)
+	var texture_size := Vector2(texture.get_size())
+	var fit_scale := minf(tile_size.x / texture_size.x, tile_size.y / texture_size.y)
+	tree_sprite.scale = Vector2.ONE * fit_scale * TREE_TILE_SCALE
+	tree_sprite.offset = Vector2.ZERO
+	tree_sprite.show()
+
+
+func _hide_tree_plot_marker_style(marker: Button) -> void:
+	var empty_style := StyleBoxEmpty.new()
+	marker.add_theme_stylebox_override("normal", empty_style)
+	marker.add_theme_stylebox_override("hover", empty_style)
+	marker.add_theme_stylebox_override("pressed", empty_style)
+
+
 func _on_action_modal_confirmed(task_id: String) -> void:
 	if house_tasks_modal.is_completed(task_id) or not _try_spend_action():
 		return
@@ -265,6 +436,9 @@ func _on_object_pressed(button: Control) -> void:
 
 
 func _on_character_arrived(target: Node) -> void:
+	if target != null and target.has_meta("tree_plot_cell"):
+		_open_tree_plot(target.get_meta("tree_plot_cell"))
+		return
 	if target != null and target.name == "Farm":
 		_open_farm_options()
 		return
