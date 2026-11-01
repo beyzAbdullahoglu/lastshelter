@@ -1,18 +1,19 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://c74cjyaeb6juk"]
 
-[ext_resource type="Script" path="res://scripts/start_screen.gd" id="1_script"]
-[ext_resource type="Theme" path="res://themes/modal_theme.tres" id="2_theme"]
-[ext_resource type="Texture2D" path="res://assets/nature/tree_healthy.png" id="3_tree"]
-[ext_resource type="Texture2D" path="res://assets/ui_icons/water_icon.png" id="4_water"]
-[ext_resource type="Texture2D" path="res://assets/ui_icons/wheat_icon.png" id="5_food"]
-[ext_resource type="Texture2D" path="res://assets/ui_icons/energy_icon.png" id="6_energy"]
-[ext_resource type="Texture2D" path="res://assets/nature/tree_sapling.png" id="7_nature"]
-[ext_resource type="Texture2D" path="res://assets/characters/survivor_pose_01.png" id="8_survivor"]
-[ext_resource type="Texture2D" path="res://assets/water/pond_healthy.png" id="9_pond"]
-[ext_resource type="Texture2D" path="res://assets/crises/drought.png" id="10_crisis"]
-[ext_resource type="Texture2D" path="res://assets/buildings/house_cottage.png" id="11_house"]
+[ext_resource type="Script" uid="uid://7nhcww3k00ef" path="res://scripts/start_screen.gd" id="1_script"]
+[ext_resource type="Theme" uid="uid://cauvxg5r5vlji" path="res://themes/modal_theme.tres" id="2_theme"]
+[ext_resource type="Texture2D" uid="uid://cnsji5g76nkr1" path="res://assets/nature/tree_healthy.png" id="3_tree"]
+[ext_resource type="Texture2D" uid="uid://ck73pb0uf3exf" path="res://assets/ui_icons/water_icon.png" id="4_water"]
+[ext_resource type="Texture2D" uid="uid://cxjsbqtjp54bd" path="res://assets/ui_icons/wheat_icon.png" id="5_food"]
+[ext_resource type="Texture2D" uid="uid://cvc73lk021sik" path="res://assets/ui_icons/energy_icon.png" id="6_energy"]
+[ext_resource type="Texture2D" uid="uid://gceekdqqb8k1" path="res://assets/nature/tree_sapling.png" id="7_nature"]
+[ext_resource type="Texture2D" uid="uid://cent6lr26efs7" path="res://assets/characters/survivor_pose_01.png" id="8_survivor"]
+[ext_resource type="Texture2D" uid="uid://cygwm0b2c0g5k" path="res://assets/water/pond_healthy.png" id="9_pond"]
+[ext_resource type="Texture2D" uid="uid://b5x7nh2vv0vas" path="res://assets/crises/drought.png" id="10_crisis"]
+[ext_resource type="Texture2D" uid="uid://bbh21chttgnfg" path="res://assets/buildings/house_cottage.png" id="11_house"]
+[ext_resource type="Texture2D" uid="uid://5wr858hccrix" path="res://assets/characters/main_character.png" id="12_pcj7n"]
 
-[node name="StartScreen" type="Control"]
+[node name="StartScreen" type="Control" unique_id=708668549]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -22,7 +23,7 @@ grow_vertical = 2
 theme = ExtResource("2_theme")
 script = ExtResource("1_script")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=1900076255]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -31,32 +32,34 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.13, 0.23, 0.19, 1)
 
-[node name="LeftTree" type="TextureRect" parent="."]
+[node name="LeftTree" type="TextureRect" parent="." unique_id=276384295]
+modulate = Color(0.75, 0.82, 0.65, 0.62)
 layout_mode = 1
+anchors_preset = -1
 anchor_left = 0.04
 anchor_top = 0.28
 anchor_right = 0.24
 anchor_bottom = 0.78
+mouse_filter = 2
 texture = ExtResource("3_tree")
 expand_mode = 1
 stretch_mode = 5
-modulate = Color(0.75, 0.82, 0.65, 0.62)
-mouse_filter = 2
 
-[node name="RightTree" type="TextureRect" parent="."]
+[node name="RightTree" type="TextureRect" parent="." unique_id=237160632]
+modulate = Color(0.75, 0.82, 0.65, 0.62)
 layout_mode = 1
+anchors_preset = -1
 anchor_left = 0.76
 anchor_top = 0.28
 anchor_right = 0.96
 anchor_bottom = 0.78
+mouse_filter = 2
 texture = ExtResource("3_tree")
 expand_mode = 1
 stretch_mode = 5
 flip_h = true
-modulate = Color(0.75, 0.82, 0.65, 0.62)
-mouse_filter = 2
 
-[node name="Panel" type="PanelContainer" parent="."]
+[node name="Panel" type="PanelContainer" parent="." unique_id=564171720]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -70,33 +73,33 @@ offset_bottom = 225.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Margin" type="MarginContainer" parent="Panel"]
+[node name="Margin" type="MarginContainer" parent="Panel" unique_id=719141730]
 layout_mode = 2
 theme_override_constants/margin_left = 42
 theme_override_constants/margin_top = 34
 theme_override_constants/margin_right = 42
 theme_override_constants/margin_bottom = 34
 
-[node name="Content" type="VBoxContainer" parent="Panel/Margin"]
+[node name="Content" type="VBoxContainer" parent="Panel/Margin" unique_id=1564224930]
 layout_mode = 2
 theme_override_constants/separation = 18
 alignment = 1
 
-[node name="Eyebrow" type="Label" parent="Panel/Margin/Content"]
+[node name="Eyebrow" type="Label" parent="Panel/Margin/Content" unique_id=1657713075]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.55, 0.45, 0.25, 1)
 theme_override_font_sizes/font_size = 15
 text = "A GENTLER WAY TO SURVIVE"
 horizontal_alignment = 1
 
-[node name="Title" type="Label" parent="Panel/Margin/Content"]
+[node name="Title" type="Label" parent="Panel/Margin/Content" unique_id=1316620502]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.16, 0.3, 0.22, 1)
 theme_override_font_sizes/font_size = 48
 text = "Last Shelter"
 horizontal_alignment = 1
 
-[node name="Subtitle" type="Label" parent="Panel/Margin/Content"]
+[node name="Subtitle" type="Label" parent="Panel/Margin/Content" unique_id=1244057325]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.29, 0.22, 0.1, 1)
 theme_override_font_sizes/font_size = 20
@@ -104,40 +107,40 @@ text = "Care for your home. Make room for nature."
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="ResourceIcons" type="HBoxContainer" parent="Panel/Margin/Content"]
+[node name="ResourceIcons" type="HBoxContainer" parent="Panel/Margin/Content" unique_id=1552822277]
 layout_mode = 2
 theme_override_constants/separation = 22
 alignment = 1
 
-[node name="WaterIcon" type="TextureRect" parent="Panel/Margin/Content/ResourceIcons"]
+[node name="WaterIcon" type="TextureRect" parent="Panel/Margin/Content/ResourceIcons" unique_id=1186110316]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 texture = ExtResource("4_water")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="FoodIcon" type="TextureRect" parent="Panel/Margin/Content/ResourceIcons"]
+[node name="FoodIcon" type="TextureRect" parent="Panel/Margin/Content/ResourceIcons" unique_id=1083993353]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 texture = ExtResource("5_food")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="EnergyIcon" type="TextureRect" parent="Panel/Margin/Content/ResourceIcons"]
+[node name="EnergyIcon" type="TextureRect" parent="Panel/Margin/Content/ResourceIcons" unique_id=930966052]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 texture = ExtResource("6_energy")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="NatureIcon" type="TextureRect" parent="Panel/Margin/Content/ResourceIcons"]
+[node name="NatureIcon" type="TextureRect" parent="Panel/Margin/Content/ResourceIcons" unique_id=436047303]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 texture = ExtResource("7_nature")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="StartButton" type="Button" parent="Panel/Margin/Content"]
+[node name="StartButton" type="Button" parent="Panel/Margin/Content" unique_id=2035564895]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(220, 54)
 layout_mode = 2
@@ -146,7 +149,7 @@ mouse_default_cursor_shape = 2
 theme_override_font_sizes/font_size = 22
 text = "Start"
 
-[node name="HowToPlayButton" type="Button" parent="Panel/Margin/Content"]
+[node name="HowToPlayButton" type="Button" parent="Panel/Margin/Content" unique_id=907092815]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(220, 46)
 layout_mode = 2
@@ -154,16 +157,17 @@ size_flags_horizontal = 4
 mouse_default_cursor_shape = 2
 text = "How to Play"
 
-[node name="Footer" type="Label" parent="Panel/Margin/Content"]
+[node name="Footer" type="Label" parent="Panel/Margin/Content" unique_id=596242011]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.38, 0.36, 0.27, 1)
 theme_override_font_sizes/font_size = 14
 text = "A small shelter can still change the world."
 horizontal_alignment = 1
 
-[node name="HowToPlayOverlay" type="ColorRect" parent="."]
+[node name="HowToPlayOverlay" type="ColorRect" parent="." unique_id=1372621608]
 unique_name_in_owner = true
 visible = false
+z_index = 10
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -172,36 +176,36 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.62)
 
-[node name="HowToPlayPanel" type="PanelContainer" parent="HowToPlayOverlay"]
+[node name="HowToPlayPanel" type="PanelContainer" parent="HowToPlayOverlay" unique_id=212767216]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -390.0
+offset_left = -420.0
 offset_top = -300.0
-offset_right = 390.0
+offset_right = 420.0
 offset_bottom = 300.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Margin" type="MarginContainer" parent="HowToPlayOverlay/HowToPlayPanel"]
+[node name="Margin" type="MarginContainer" parent="HowToPlayOverlay/HowToPlayPanel" unique_id=1309205844]
 layout_mode = 2
-theme_override_constants/margin_left = 30
+theme_override_constants/margin_left = 56
 theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 30
+theme_override_constants/margin_right = 56
 theme_override_constants/margin_bottom = 24
 
-[node name="Content" type="VBoxContainer" parent="HowToPlayOverlay/HowToPlayPanel/Margin"]
+[node name="Content" type="VBoxContainer" parent="HowToPlayOverlay/HowToPlayPanel/Margin" unique_id=1306166938]
 layout_mode = 2
 theme_override_constants/separation = 14
 
-[node name="Header" type="HBoxContainer" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content"]
+[node name="Header" type="HBoxContainer" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content" unique_id=166720976]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="Title" type="Label" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Header"]
+[node name="Title" type="Label" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Header" unique_id=826593127]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.16, 0.3, 0.22, 1)
@@ -209,7 +213,7 @@ theme_override_font_sizes/font_size = 28
 text = "How to Play"
 vertical_alignment = 1
 
-[node name="CloseButton" type="Button" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Header"]
+[node name="CloseButton" type="Button" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Header" unique_id=521805263]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(42, 42)
 layout_mode = 2
@@ -217,138 +221,156 @@ mouse_default_cursor_shape = 2
 theme_type_variation = &"CloseButton"
 text = "✕"
 
-[node name="Scroll" type="ScrollContainer" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content"]
+[node name="Scroll" type="ScrollContainer" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content" unique_id=1959953756]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="Instructions" type="VBoxContainer" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll"]
+[node name="Instructions" type="VBoxContainer" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll" unique_id=670805237]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 14
 
-[node name="MovementRow" type="HBoxContainer" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions"]
+[node name="MovementRow" type="HBoxContainer" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions" unique_id=1539845210]
 layout_mode = 2
 theme_override_constants/separation = 14
 
-[node name="MovementIcon" type="TextureRect" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/MovementRow"]
+[node name="MovementIcon" type="TextureRect" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/MovementRow" unique_id=1254467156]
 custom_minimum_size = Vector2(42, 42)
 layout_mode = 2
 texture = ExtResource("8_survivor")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Movement" type="Label" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/MovementRow"]
+[node name="Movement" type="Label" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/MovementRow" unique_id=764104829]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 18
-text = "GET AROUND\nClick an object to send your character there. Once they arrive, its action panel opens."
+text = "GET AROUND
+Click an object to send your character there. Once they arrive, its action panel opens."
 autowrap_mode = 3
 
-[node name="ResourcesRow" type="HBoxContainer" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions"]
+[node name="ResourcesRow" type="HBoxContainer" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions" unique_id=523303537]
 layout_mode = 2
 theme_override_constants/separation = 14
 
-[node name="HouseIcon" type="TextureRect" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/ResourcesRow"]
+[node name="HouseIcon" type="TextureRect" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/ResourcesRow" unique_id=248158969]
 custom_minimum_size = Vector2(42, 42)
 layout_mode = 2
 texture = ExtResource("11_house")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Resources" type="Label" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/ResourcesRow"]
+[node name="Resources" type="Label" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/ResourcesRow" unique_id=1191159259]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 18
-text = "MANAGE YOUR SHELTER\nKeep Water, Food, Energy and Nature above their daily targets. Check the bars at the top and the House Tasks pin."
+text = "MANAGE YOUR SHELTER
+Keep Water, Food, Energy and Nature above their daily targets. Check the bars at the top and the House Tasks pin."
 autowrap_mode = 3
 
-[node name="ActionsRow" type="HBoxContainer" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions"]
+[node name="ActionsRow" type="HBoxContainer" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions" unique_id=1165813613]
 layout_mode = 2
 theme_override_constants/separation = 14
 
-[node name="ActionsIcon" type="TextureRect" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/ActionsRow"]
+[node name="ActionsIcon" type="TextureRect" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/ActionsRow" unique_id=1889422278]
 custom_minimum_size = Vector2(42, 42)
 layout_mode = 2
 texture = ExtResource("6_energy")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Actions" type="Label" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/ActionsRow"]
+[node name="Actions" type="Label" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/ActionsRow" unique_id=1343666592]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 18
-text = "SPEND ACTIONS WISELY\nYou have 5 actions each day. Most activities cost 1 action; some can only be done once per day."
+text = "SPEND ACTIONS WISELY
+You have 5 actions each day. Most activities cost 1 action; some can only be done once per day."
 autowrap_mode = 3
 
-[node name="WaterRow" type="HBoxContainer" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions"]
+[node name="WaterRow" type="HBoxContainer" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions" unique_id=1547423445]
 layout_mode = 2
 theme_override_constants/separation = 14
 
-[node name="WaterIcon" type="TextureRect" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/WaterRow"]
+[node name="WaterIcon" type="TextureRect" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/WaterRow" unique_id=1081113080]
 custom_minimum_size = Vector2(42, 42)
 layout_mode = 2
 texture = ExtResource("4_water")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Water" type="Label" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/WaterRow"]
+[node name="Water" type="Label" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/WaterRow" unique_id=1356747736]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 18
-text = "WATER & FARMING\nThe well gives +12 Water and -5 Nature once per day. Unlock the tank to raise daily Water renewal from +2 to +6. Farm with basic or drip irrigation, then choose a harvest method."
+text = "WATER & FARMING
+The well gives +12 Water and -5 Nature once per day. Unlock the tank to raise daily Water renewal from +2 to +6. Farm with basic or drip irrigation, then choose a harvest method."
 autowrap_mode = 3
 
-[node name="PondRow" type="HBoxContainer" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions"]
+[node name="PondRow" type="HBoxContainer" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions" unique_id=2045859389]
 layout_mode = 2
 theme_override_constants/separation = 14
 
-[node name="PondIcon" type="TextureRect" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/PondRow"]
+[node name="PondIcon" type="TextureRect" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/PondRow" unique_id=43443682]
 custom_minimum_size = Vector2(42, 42)
 layout_mode = 2
 texture = ExtResource("9_pond")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Pond" type="Label" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/PondRow"]
+[node name="Pond" type="Label" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/PondRow" unique_id=439204352]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 18
-text = "POND & NATURE\nFish once per day for +8 Food and -1 Nature, or clean the pond once per day for +7 Nature and a flower."
+text = "POND & NATURE
+Fish once per day for +8 Food and -1 Nature, or clean the pond once per day for +7 Nature and a flower."
 autowrap_mode = 3
 
-[node name="TreesRow" type="HBoxContainer" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions"]
+[node name="TreesRow" type="HBoxContainer" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions" unique_id=141467939]
 layout_mode = 2
 theme_override_constants/separation = 14
 
-[node name="TreesIcon" type="TextureRect" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/TreesRow"]
+[node name="TreesIcon" type="TextureRect" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/TreesRow" unique_id=474495001]
 custom_minimum_size = Vector2(42, 42)
 layout_mode = 2
 texture = ExtResource("3_tree")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Trees" type="Label" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/TreesRow"]
+[node name="Trees" type="Label" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/TreesRow" unique_id=1924845170]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 18
-text = "GROW YOUR GARDEN\nPlant one tree each day. It costs Water and gives Nature; after 10 seconds it matures and adds more Nature. Compost and recycling can also help restore Nature."
+text = "GROW YOUR GARDEN
+Plant one tree each day. It costs Water and gives Nature; after 10 seconds it matures and adds more Nature. Compost and recycling can also help restore Nature."
 autowrap_mode = 3
 
-[node name="CrisesRow" type="HBoxContainer" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions"]
+[node name="CrisesRow" type="HBoxContainer" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions" unique_id=298348524]
 layout_mode = 2
 theme_override_constants/separation = 14
 
-[node name="CrisisIcon" type="TextureRect" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/CrisesRow"]
+[node name="CrisisIcon" type="TextureRect" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/CrisesRow" unique_id=553435911]
 custom_minimum_size = Vector2(42, 42)
 layout_mode = 2
 texture = ExtResource("10_crisis")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Crises" type="Label" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/CrisesRow"]
+[node name="Crises" type="Label" parent="HowToPlayOverlay/HowToPlayPanel/Margin/Content/Scroll/Instructions/CrisesRow" unique_id=2460617]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 18
-text = "RESPOND TO CRISES\nChoose whether to intervene when a crisis appears. Intervention costs an action but may reduce resource losses."
+text = "RESPOND TO CRISES
+Choose whether to intervene when a crisis appears. Intervention costs an action but may reduce resource losses."
 autowrap_mode = 3
+
+[node name="MainCharacter" type="Sprite2D" parent="." unique_id=1644113795]
+position = Vector2(289.99997, 456)
+scale = Vector2(0.4069282, 0.4065118)
+texture = ExtResource("12_pcj7n")
+
+[node name="HouseCottage" type="Sprite2D" parent="." unique_id=527471643]
+position = Vector2(1026, 539)
+scale = Vector2(1.1021221, 1.1848484)
+texture = ExtResource("11_house")
+flip_h = true
