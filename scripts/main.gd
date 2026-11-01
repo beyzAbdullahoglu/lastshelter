@@ -3,6 +3,8 @@ extends Control
 const PIN_BOB_HEIGHT := 6.0
 const PIN_BOB_DURATION := 0.6
 const FARM_GROWTH_TICK_DURATION := 1.0
+const BASIC_IRRIGATION_WATER_COST := 18.0
+const DRIP_IRRIGATION_WATER_COST := 8.0
 const FARM_EMPTY_TEXTURE: Texture2D = preload("res://assets/agriculture/empty.png")
 const FARM_GROWING_TEXTURE: Texture2D = preload("res://assets/agriculture/growing.png")
 const FARM_WATERED_TEXTURE: Texture2D = preload("res://assets/agriculture/watered.png")
@@ -13,7 +15,7 @@ const TOTAL_DAYS := 6
 const DAY_DURATION := 180.0
 # Daily resource growth happens once, after this much of the day has passed.
 const RESOURCE_GROWTH_TIME := 90.0
-const MAX_ACTIONS := 3
+const MAX_ACTIONS := 5
 const NATURE_THRESHOLD := 50.0
 const HEALTHY_NATURE_GROWTH := 5.0
 const POOR_NATURE_GROWTH := 2.0
@@ -49,6 +51,8 @@ const OBJECT_ACTIONS := {
 var current_day := 1
 var _farm_is_planted := false
 var _farm_is_ready := false
+var _farm_irrigated_today := false
+var _farm_harvested_today := false
 var _farm_growth_generation := 0
 var actions_left := MAX_ACTIONS
 var _day_elapsed := 0.0
@@ -69,7 +73,7 @@ func _ready() -> void:
 	house_task_pin.pressed.connect(house_tasks_modal.open)
 	house_tasks_modal.task_completed.connect(_on_house_task_completed)
 	house_tasks_modal.all_tasks_completed.connect(house_task_pin.hide)
-	action_modal.confirmed.connect(house_tasks_modal.complete_task)
+	action_modal.confirmed.connect(_on_action_modal_confirmed)
 	farm_action_modal.confirmed.connect(_on_farm_option_selected)
 	_reset_farm()
 	crisis_modal.choice_made.connect(_on_crisis_choice_made)
@@ -117,6 +121,8 @@ func _start_next_day() -> void:
 	_resources_grown_today = false
 	current_day += 1
 	actions_left = MAX_ACTIONS
+	_farm_irrigated_today = false
+	_farm_harvested_today = false
 	_todays_crises = _crisis_deck.draw_day()
 	house_tasks_modal.set_day(current_day)
 	house_task_pin.show()
@@ -126,6 +132,20 @@ func _start_next_day() -> void:
 func _refresh_day_hud() -> void:
 	day_label.text = "DAY %02d / %02d" % [current_day, TOTAL_DAYS]
 	action_label.text = "%d / %d" % [actions_left, MAX_ACTIONS]
+
+
+func _try_spend_action() -> bool:
+	if actions_left <= 0:
+		return false
+	actions_left -= 1
+	_refresh_day_hud()
+	return true
+
+
+func _on_action_modal_confirmed(task_id: String) -> void:
+	if house_tasks_modal.is_completed(task_id) or not _try_spend_action():
+		return
+	house_tasks_modal.complete_task(task_id)
 
 
 func _on_object_pressed(button: Control) -> void:
@@ -148,13 +168,21 @@ func _on_character_arrived(target: Node) -> void:
 	house_tasks_modal.close()
 	if house_tasks_modal.is_completed(action.task):
 		action_modal.open_action(action.task, action.done)
+	elif actions_left <= 0:
+		action_modal.open_action(action.task, "No actions left today.")
 	else:
 		action_modal.open_action(action.task, action.message.format({"units": DayTasks.MAIN_TASK_REQUIRED}), action.button)
 
 
 func _open_farm_options() -> void:
+	if actions_left <= 0:
+		farm_action_modal.open_action("", "No actions left today.")
+		return
 	if _farm_is_planted:
 		if not _farm_is_ready:
+			return
+		if _farm_harvested_today:
+			farm_action_modal.open_action("", "You have already harvested today.")
 			return
 		farm_action_modal.open_choices(
 			"Choose a harvest method",
@@ -164,6 +192,19 @@ func _open_farm_options() -> void:
 			"Eco harvest"
 		)
 	else:
+		if _farm_irrigated_today:
+			farm_action_modal.open_action("", "You have already irrigated today.")
+			return
+		if water_bar.value < DRIP_IRRIGATION_WATER_COST:
+			_show_insufficient_farm_water(DRIP_IRRIGATION_WATER_COST)
+			return
+		if water_bar.value < BASIC_IRRIGATION_WATER_COST:
+			farm_action_modal.open_action(
+				"plant_drip",
+				"Not enough water for basic irrigation. Drip irrigation needs 8 units.",
+				"Drip irrigation"
+			)
+			return
 		farm_action_modal.open_choices(
 			"Choose a planting and watering method",
 			"plant_basic",
@@ -176,17 +217,39 @@ func _open_farm_options() -> void:
 func _on_farm_option_selected(option_id: String) -> void:
 	match option_id:
 		"plant_basic":
+			if _farm_is_planted or _farm_irrigated_today:
+				return
+			if water_bar.value < BASIC_IRRIGATION_WATER_COST:
+				_show_insufficient_farm_water(BASIC_IRRIGATION_WATER_COST)
+				return
+			if not _try_spend_action():
+				return
 			_apply_resource_changes(-18, 0, -3, -5)
 			_start_farm_growth(15)
 		"plant_drip":
+			if _farm_is_planted or _farm_irrigated_today:
+				return
+			if water_bar.value < DRIP_IRRIGATION_WATER_COST:
+				_show_insufficient_farm_water(DRIP_IRRIGATION_WATER_COST)
+				return
+			if not _try_spend_action():
+				return
 			_apply_resource_changes(-8, 0, -2, -1)
 			_start_farm_growth(30)
 		"harvest_standard":
+			if not _farm_is_ready or _farm_harvested_today or not _try_spend_action():
+				return
 			_apply_resource_changes(0, 20, -5, -7)
+			_farm_harvested_today = true
 			_reset_farm()
+			house_tasks_modal.complete_task("food")
 		"harvest_careful":
+			if not _farm_is_ready or _farm_harvested_today or not _try_spend_action():
+				return
 			_apply_resource_changes(0, 17, -2, 3)
+			_farm_harvested_today = true
 			_reset_farm()
+			house_tasks_modal.complete_task("food")
 
 
 func _apply_resource_changes(water: float, food: float, energy: float, nature: float) -> void:
@@ -196,10 +259,18 @@ func _apply_resource_changes(water: float, food: float, energy: float, nature: f
 	nature_bar.value += nature
 
 
+func _show_insufficient_farm_water(required_water: float) -> void:
+	farm_action_modal.open_action(
+		"",
+		"Not enough water. This irrigation method needs %d units." % int(required_water)
+	)
+
+
 func _start_farm_growth(duration_seconds: int) -> void:
 	_farm_growth_generation += 1
 	_farm_is_planted = true
 	_farm_is_ready = false
+	_farm_irrigated_today = true
 	_set_farm_texture(FARM_WATERED_TEXTURE)
 	farm_timer_label.show()
 	_run_farm_growth_timer(duration_seconds, _farm_growth_generation)
@@ -289,8 +360,8 @@ func _trigger_crisis() -> void:
 func _on_crisis_choice_made(crisis: Dictionary, intervened: bool) -> void:
 	var outcome: Dictionary = crisis.intervene if intervened else crisis.ignore
 	if intervened:
-		actions_left -= 1
-		_refresh_day_hud()
+		if not _try_spend_action():
+			return
 
 	var bars := {"water": water_bar, "food": food_bar, "energy": energy_bar, "nature": nature_bar}
 	for key in outcome.effects:
