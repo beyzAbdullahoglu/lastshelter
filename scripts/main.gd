@@ -40,7 +40,7 @@ const FOG_SPRITE_SHEET: Texture2D = preload("res://assets/effects/fog_sprite_she
 const POWER_PLANT_ENERGY_AMOUNT := 12.0
 const SOLAR_PANEL_ENERGY_AMOUNT := 10.0
 const POWER_PLANT_UPGRADE_ACTION_COST := 2
-const POWER_PLANT_NATURE_COST := 10.0
+const POWER_PLANT_NATURE_COST := 5.0
 
 const TOTAL_DAYS := 6
 const DAY_DURATION := 90.0
@@ -130,7 +130,6 @@ func _ready() -> void:
 	_create_tree_plot_markers()
 	_reset_farm()
 	_refresh_water_tank()
-	_apply_power_plant_nature_cost()
 	crisis_modal.choice_made.connect(_on_crisis_choice_made)
 	crisis_modal.resolved.connect(_on_crisis_resolved)
 	_todays_crises = _crisis_deck.draw_day()
@@ -235,7 +234,7 @@ func _begin_next_day() -> void:
 	for key in renewal:
 		parts.append("%s +%s" % [key.capitalize(), String.num(renewal[key])])
 	if not _power_plant_upgraded:
-		parts.append("Power plant: Nature -10")
+		parts.append("Power plant: Nature -5")
 	day_modal.open_message(
 		"Day %d is starting" % current_day,
 		"Resources are being renewed:\n%s" % "   ".join(parts),
