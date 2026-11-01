@@ -12,15 +12,17 @@ const REWARD_FLOWER_SIZE := Vector2(44, 44)
 const REWARD_POP_DURATION := 0.35
 
 const TOTAL_DAYS := 6
-const DAY_DURATION := 180.0
-# Daily resource growth happens once, after this much of the day has passed.
-const RESOURCE_GROWTH_TIME := 90.0
+const DAY_DURATION := 90.0
 const MAX_ACTIONS := 5
-const NATURE_THRESHOLD := 50.0
-const HEALTHY_NATURE_GROWTH := 5.0
-const POOR_NATURE_GROWTH := 2.0
+const MAX_HEARTS := 3
+const FULL_HEART := "♥️"
+const EMPTY_HEART := "🖤"
+# A day fails if any resource ends below its baseline.
+const RESOURCE_BASELINES := {"water": 35.0, "food": 30.0, "energy": 30.0, "nature": 40.0}
+# Added at the start of every day after the first.
+const DAILY_RENEWAL := {"water": 2.0, "food": 1.0, "energy": 1.0, "nature": 1.0}
 # Seconds into the day at which each daily crisis appears (one human, one natural).
-const CRISIS_TIMES := [40.0, 120.0]
+const CRISIS_TIMES := [20.0, 60.0]
 
 # Object name -> house task it fulfils when the character reaches it.
 const OBJECT_ACTIONS := {
@@ -41,12 +43,14 @@ const OBJECT_ACTIONS := {
 @onready var food_bar: ProgressBar = $HUD/TopPanel/Resources/FoodBox/FoodBar
 @onready var reward_modal = $RewardModal
 @onready var crisis_modal = $CrisisModal
+@onready var day_modal = $DayModal
 @onready var reward_flowers: HFlowContainer = $World/Decorations/RewardFlowers
 @onready var energy_bar: ProgressBar = $HUD/TopPanel/Resources/EnergyBox/EnergyBar
 @onready var nature_bar: ProgressBar = $HUD/TopPanel/Resources/NatureBox/NatureBar
 @onready var day_label: Label = $HUD/BottomPanel/MarginContainer/MainRow/DayBox/VBox/DayLabel
 @onready var action_label: Label = $HUD/BottomPanel/MarginContainer/MainRow/ActionBox/VBox/ActionLabel
 @onready var day_timer_label: Label = $HUD/DayTimerLabel
+@onready var health_label: Label = $HUD/BottomPanel/MarginContainer/MainRow/HealthBox/VBox/HealthLabel
 
 var current_day := 1
 var _farm_is_planted := false
@@ -56,7 +60,9 @@ var _farm_harvested_today := false
 var _farm_growth_generation := 0
 var actions_left := MAX_ACTIONS
 var _day_elapsed := 0.0
-var _resources_grown_today := false
+var hearts := MAX_HEARTS
+# Freezes the day clock from 00:00 until the next day starts.
+var _day_over := false
 var _crisis_deck := CrisisDeck.new()
 var _todays_crises: Array = []
 # Day -> multiplier on that day's water growth (set by drought crises).
@@ -81,44 +87,134 @@ func _ready() -> void:
 	_todays_crises = _crisis_deck.draw_day()
 	_start_pin_bob()
 	_refresh_day_hud()
+	_refresh_health()
 
 
 func _process(delta: float) -> void:
-	# The day clock is frozen while a crisis card is waiting for the player.
-	if crisis_modal.visible:
+	# The day clock is frozen while a crisis card is waiting for the player or the day is being evaluated.
+	if crisis_modal.visible or _day_over:
 		return
 	_day_elapsed += delta
 	var crisis_index := CRISIS_TIMES.size() - _todays_crises.size()
 	if not _todays_crises.is_empty() and _day_elapsed >= CRISIS_TIMES[crisis_index]:
 		_trigger_crisis()
 		return
-	if not _resources_grown_today and _day_elapsed >= RESOURCE_GROWTH_TIME:
-		_grow_resources()
 	if _day_elapsed >= DAY_DURATION:
-		_start_next_day()
+		_end_day()
+		return
 	_refresh_day_timer()
 
 
-# Counts down from 03:00; ceil keeps 03:00 visible for the first second.
+# Counts down from DAY_DURATION (01:30); ceil keeps 01:30 visible for the first second.
 func _refresh_day_timer() -> void:
 	var remaining := ceili(maxf(DAY_DURATION - _day_elapsed, 0.0))
 	day_timer_label.text = "%02d:%02d" % [floori(remaining / 60.0), remaining % 60]
 
 
-# Water, food and energy grow once per day; a healthy nature grows them faster.
-func _grow_resources() -> void:
-	_resources_grown_today = true
-	var amount := HEALTHY_NATURE_GROWTH if nature_bar.value > NATURE_THRESHOLD else POOR_NATURE_GROWTH
-	food_bar.value += amount
-	energy_bar.value += amount
-	water_bar.value += amount * _water_growth_factors.get(current_day, 1.0)
+func _end_day() -> void:
+	_day_over = true
+	_day_elapsed = DAY_DURATION
+	_refresh_day_timer()
+	house_tasks_modal.close()
+	action_modal.close()
+	farm_action_modal.close()
+	reward_modal.close()
+
+	day_modal.open_message("End of day!", "Resources and tasks are being checked...", "See results")
+	await day_modal.continued
+
+	var tasks_ok := _all_main_tasks_completed()
+	var low_resources := _resources_below_baseline()
+	var failed := not tasks_ok or not low_resources.is_empty()
+	# At most one heart is lost per day, no matter how many criteria fail.
+	if failed:
+		hearts -= 1
+		_refresh_health()
+	day_modal.open_message("Day %d results" % current_day, _format_day_report(failed), "Continue")
+	await day_modal.continued
+
+	if hearts <= 0:
+		_finish_game("Game over", "You ran out of hearts.")
+	elif current_day >= TOTAL_DAYS:
+		_finish_game("You survived!", "You made it through all %d days." % TOTAL_DAYS)
+	else:
+		_begin_next_day()
+
+
+func _all_main_tasks_completed() -> bool:
+	for task in DayTasks.MAIN_TASKS:
+		if not house_tasks_modal.is_completed(task.id):
+			return false
+	return true
+
+
+func _resources_below_baseline() -> Array[String]:
+	var low: Array[String] = []
+	var bars := _resource_bars()
+	for key in RESOURCE_BASELINES:
+		if bars[key].value < RESOURCE_BASELINES[key]:
+			low.append(key)
+	return low
+
+
+func _format_day_report(failed: bool) -> String:
+	var lines := PackedStringArray(["Tasks:"])
+	for task in DayTasks.MAIN_TASKS:
+		lines.append("%s %s" % [_check_mark(house_tasks_modal.is_completed(task.id)), task.id.capitalize()])
+	lines.append("")
+	lines.append("Resources:")
+	var bars := _resource_bars()
+	for key in RESOURCE_BASELINES:
+		var value: float = bars[key].value
+		lines.append("%s %s %d / %d" % [_check_mark(value >= RESOURCE_BASELINES[key]), key.capitalize(), value, RESOURCE_BASELINES[key]])
+	lines.append("")
+	if failed:
+		lines.append("You lost a heart (%d left)." % hearts)
+	else:
+		lines.append("The day was a success!")
+	return "\n".join(lines)
+
+
+static func _check_mark(ok: bool) -> String:
+	return "✓" if ok else "✗"
+
+
+func _begin_next_day() -> void:
+	_start_next_day()
+	var renewal := _renew_resources()
+	var parts := PackedStringArray()
+	for key in renewal:
+		parts.append("%s +%s" % [key.capitalize(), String.num(renewal[key])])
+	day_modal.open_message(
+		"Day %d is starting" % current_day,
+		"Resources are being renewed:\n%s" % "   ".join(parts),
+		"Start day"
+	)
+	await day_modal.continued
+	_day_over = false
+
+
+# Applies the daily renewal for current_day; drought crises scale the water part.
+func _renew_resources() -> Dictionary:
+	var renewal := DAILY_RENEWAL.duplicate()
+	renewal.water *= _water_growth_factors.get(current_day, 1.0)
 	_water_growth_factors.erase(current_day)
+	var bars := _resource_bars()
+	for key in renewal:
+		bars[key].value += renewal[key]
+	return renewal
+
+
+# The clock stays frozen (_day_over) until the scene reloads; all game state lives in this scene.
+func _finish_game(title: String, body: String) -> void:
+	day_modal.open_message(title, body, "Play again")
+	await day_modal.continued
+	get_tree().reload_current_scene()
 
 
 # Health (hearts) is intentionally carried over between days.
 func _start_next_day() -> void:
 	_day_elapsed = 0.0
-	_resources_grown_today = false
 	current_day += 1
 	actions_left = MAX_ACTIONS
 	_farm_irrigated_today = false
@@ -132,6 +228,17 @@ func _start_next_day() -> void:
 func _refresh_day_hud() -> void:
 	day_label.text = "DAY %02d / %02d" % [current_day, TOTAL_DAYS]
 	action_label.text = "%d / %d" % [actions_left, MAX_ACTIONS]
+
+
+func _refresh_health() -> void:
+	var icons := PackedStringArray()
+	for i in MAX_HEARTS:
+		icons.append(FULL_HEART if i < hearts else EMPTY_HEART)
+	health_label.text = " ".join(icons)
+
+
+func _resource_bars() -> Dictionary:
+	return {"water": water_bar, "food": food_bar, "energy": energy_bar, "nature": nature_bar}
 
 
 func _try_spend_action() -> bool:
@@ -225,7 +332,7 @@ func _on_farm_option_selected(option_id: String) -> void:
 			if not _try_spend_action():
 				return
 			_apply_resource_changes(-18, 0, -3, -5)
-			_start_farm_growth(15)
+			_start_farm_growth(8)
 		"plant_drip":
 			if _farm_is_planted or _farm_irrigated_today:
 				return
@@ -235,7 +342,7 @@ func _on_farm_option_selected(option_id: String) -> void:
 			if not _try_spend_action():
 				return
 			_apply_resource_changes(-8, 0, -2, -1)
-			_start_farm_growth(30)
+			_start_farm_growth(15)
 		"harvest_standard":
 			if not _farm_is_ready or _farm_harvested_today or not _try_spend_action():
 				return
@@ -363,7 +470,7 @@ func _on_crisis_choice_made(crisis: Dictionary, intervened: bool) -> void:
 		if not _try_spend_action():
 			return
 
-	var bars := {"water": water_bar, "food": food_bar, "energy": energy_bar, "nature": nature_bar}
+	var bars := _resource_bars()
 	for key in outcome.effects:
 		bars[key].value += outcome.effects[key]
 

@@ -64,9 +64,9 @@ const CRISES := [
 		"id": "drought", "category": NATURE,
 		"title": "Prolonged Drought",
 		"story": "There has been insufficient rainfall for an extended period. The water sources supplying the well are declining, the soil is drying out, and agricultural productivity is decreasing.",
-		# Normal well regeneration is +12, drought regeneration is +4 -> 1/3 of normal.
-		"ignore": {"effects": {"water": -20, "nature": -10}, "water_growth": {"factor": 1.0 / 3.0, "days": 2}},
-		"intervene": {"text": "Limit water consumption, protect the soil with mulch and use efficient irrigation.", "effects": {"water": -10, "nature": -5}, "water_growth": {"factor": 1.0 / 3.0, "days": 1}},
+		# Halves the daily well renewal (+2 water at the start of each new day -> +1).
+		"ignore": {"effects": {"water": -20, "nature": -10}, "water_growth": {"factor": 0.5, "days": 2}},
+		"intervene": {"text": "Limit water consumption, protect the soil with mulch and use efficient irrigation.", "effects": {"water": -10, "nature": -5}, "water_growth": {"factor": 0.5, "days": 1}},
 		"message": "Collecting water alone is not enough to combat drought. Reducing water consumption and preserving soil moisture are equally important.",
 	},
 	{

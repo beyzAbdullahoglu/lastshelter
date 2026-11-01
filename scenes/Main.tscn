@@ -16,6 +16,7 @@
 [ext_resource type="Texture2D" uid="uid://cqjuj2ch5cccx" path="res://assets/agriculture/empty.png" id="13_farm_empty"]
 [ext_resource type="PackedScene" path="res://scenes/reward_modal.tscn" id="13_rewardmodal"]
 [ext_resource type="PackedScene" path="res://scenes/crisis_modal.tscn" id="14_crisismodal"]
+[ext_resource type="PackedScene" path="res://scenes/day_modal.tscn" id="15_daymodal"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mwfav"]
 texture = ExtResource("11_qmy6f")
@@ -434,7 +435,7 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 44
-text = "03:00"
+text = "01:30"
 
 [node name="BottomPanel" type="PanelContainer" parent="HUD" unique_id=66225145]
 layout_mode = 1
@@ -561,4 +562,7 @@ layout_mode = 1
 layout_mode = 1
 
 [node name="HouseTasksModal" parent="." unique_id=224081239 instance=ExtResource("11_taskmodal")]
+layout_mode = 1
+
+[node name="DayModal" parent="." unique_id=1873429016 instance=ExtResource("15_daymodal")]
 layout_mode = 1
