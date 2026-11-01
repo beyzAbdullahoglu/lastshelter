@@ -3,7 +3,7 @@ extends Control
 const PIN_BOB_HEIGHT := 6.0
 const PIN_BOB_DURATION := 0.6
 const FARM_GROWTH_TICK_DURATION := 1.0
-const BASIC_IRRIGATION_WATER_COST := 18.0
+const BASIC_IRRIGATION_WATER_COST := 14.0
 const DRIP_IRRIGATION_WATER_COST := 8.0
 const FARM_EMPTY_TEXTURE: Texture2D = preload("res://assets/agriculture/empty.png")
 const FARM_GROWING_TEXTURE: Texture2D = preload("res://assets/agriculture/growing.png")
@@ -27,6 +27,9 @@ const TREE_VERTICAL_OFFSET := -12.0
 const WATER_TANK_WATER := 6.0
 const WELL_WATER_GAIN := 12.0
 const WELL_NATURE_COST := 5.0
+const FISH_FOOD_GAIN := 8.0
+const FISH_NATURE_COST := 1.0
+const POND_CLEAN_NATURE_GAIN := 7.0
 const COMPOST_FOOD := 5.0
 const COMPOST_NATURE := 6.0
 const RECYCLING_NATURE_GAIN := 5.0
@@ -88,8 +91,11 @@ var _farm_irrigated_today := false
 var _farm_harvested_today := false
 var _farm_growth_generation := 0
 var _water_tank_unlocked := false
+var _well_used_today := false
 var _composted_today := false
 var _recycled_today := false
+var _fished_today := false
+var _pond_cleaned_today := false
 var _power_plant_upgraded := false
 var _energy_collected_today := false
 var actions_left := MAX_ACTIONS
@@ -243,7 +249,7 @@ func _begin_next_day() -> void:
 func _renew_resources() -> Dictionary:
 	var renewal := DAILY_RENEWAL.duplicate()
 	if _water_tank_unlocked:
-		renewal.water += WATER_TANK_WATER
+		renewal.water = WATER_TANK_WATER
 	renewal.water *= _water_growth_factors.get(current_day, 1.0)
 	_water_growth_factors.erase(current_day)
 	var bars := _resource_bars()
@@ -267,8 +273,11 @@ func _start_next_day() -> void:
 	actions_left = MAX_ACTIONS
 	_farm_irrigated_today = false
 	_farm_harvested_today = false
+	_well_used_today = false
 	_composted_today = false
 	_recycled_today = false
+	_fished_today = false
+	_pond_cleaned_today = false
 	_tree_planted_today = false
 	_energy_collected_today = false
 	_todays_crises = _crisis_deck.draw_day()
@@ -356,13 +365,13 @@ func _open_tree_plot(cell: Vector2i) -> void:
 	elif water_bar.value < TREE_WATER_COST:
 		tree_action_modal.open_action(
 			"",
-			"Not enough water. Planting needs %d water." % int(TREE_WATER_COST)
+			"Not enough water. Planting needs {water} %d." % int(TREE_WATER_COST)
 		)
 	else:
 		_pending_tree_cell = cell
 		tree_action_modal.open_action(
 			"plant_tree",
-			"Plant a tree?\nCost: 1 action and %d water\nNature +%d\n\n🌼 A little flower surprise!" % [
+			"Plant a tree?\n💰 Cost: 1 action + {water} %d\n{nature} +%d\n\n🌼 A little flower surprise!" % [
 				int(TREE_WATER_COST),
 				int(TREE_NATURE_GAIN),
 			],
@@ -460,6 +469,10 @@ func _on_action_modal_confirmed(task_id: String) -> void:
 			_make_compost()
 		"recycle":
 			_recycle()
+		"fish":
+			_fish()
+		"clean_pond":
+			_clean_pond()
 		"power_collect_energy":
 			_collect_power_energy()
 		"power_improve":
@@ -501,9 +514,12 @@ func _on_character_arrived(target: Node) -> void:
 		return
 	if target != null and target.name == "RecyclingBin":
 		_open_recycling()
+		return
+	if target != null and target.name == "Pond":
+		_open_pond_options()
 
 
-# Unlocking costs one action and permanently increases water renewal on later days.
+# Unlocking costs one action and raises daily water renewal from +2 to +6 on later days.
 func _open_water_tank() -> void:
 	house_tasks_modal.close()
 	if not _water_tank_unlocked:
@@ -512,13 +528,16 @@ func _open_water_tank() -> void:
 		else:
 			action_modal.open_action(
 				"unlock_water_tank",
-				"Blue Water Tank\nActivate rainwater collection.\nDaily water renewal: +%d starting next day.\nCost: 1 action." % int(WATER_TANK_WATER),
+				"Blue Water Tank\nActivate rainwater collection.\nDaily {water} renewal increases from +%d to +%d starting next day.\n💰 Cost: 1 action." % [
+					int(DAILY_RENEWAL.water),
+					int(WATER_TANK_WATER),
+				],
 				"Unlock"
 			)
 	else:
 		action_modal.open_action(
 			"",
-			"Blue Water Tank\nRainwater collection is active.\nDaily water renewal: +%d." % int(WATER_TANK_WATER)
+			"Blue Water Tank\nRainwater collection is active.\nDaily {water} renewal: +%d." % int(WATER_TANK_WATER)
 		)
 
 
@@ -531,18 +550,22 @@ func _unlock_water_tank() -> void:
 
 func _open_water_well() -> void:
 	house_tasks_modal.close()
+	if _well_used_today:
+		action_modal.open_action("", "You have already collected water from the well today.")
+		return
 	if actions_left <= 0:
 		action_modal.open_action("", "No actions left today.")
 		return
 	var tank_tip := (
-		"\n\n💡 Unlock the water tank to add +%d water to your supply at the start of each new day."
-		% int(WATER_TANK_WATER)
+		"\n\n💡 Unlock the water tank to increase daily {water} renewal from +%d to +%d."
+		% [int(DAILY_RENEWAL.water), int(WATER_TANK_WATER)]
 		if not _water_tank_unlocked
-		else "\n\nYour water tank adds +%d water to your supply each new day." % int(WATER_TANK_WATER)
+		else "\n\nYour water tank increases daily {water} renewal from +%d to +%d."
+			% [int(DAILY_RENEWAL.water), int(WATER_TANK_WATER)]
 	)
 	action_modal.open_action(
 		"collect_water",
-		"Collect water from the well.\nWater +%d\nNature -%d\nCost: 1 action.%s" % [
+		"Collect water from the well.\n{water} +%d\n{nature} -%d\n💰 Cost: 1 action.%s" % [
 			int(WELL_WATER_GAIN),
 			int(WELL_NATURE_COST),
 			tank_tip,
@@ -552,8 +575,9 @@ func _open_water_well() -> void:
 
 
 func _collect_water_from_well() -> void:
-	if not _try_spend_action():
+	if _well_used_today or not _try_spend_action():
 		return
+	_well_used_today = true
 	_apply_resource_changes(WELL_WATER_GAIN, 0, 0, -WELL_NATURE_COST)
 	if not house_tasks_modal.is_completed("water"):
 		house_tasks_modal.complete_task("water")
@@ -573,7 +597,7 @@ func _open_compost() -> void:
 	else:
 		action_modal.open_action(
 			"make_compost",
-			"Compost\nSeparate the waste and turn it into compost.\n\nCost: 1 action\nGain: Food +%d, Nature +%d and a flower" % [COMPOST_FOOD, COMPOST_NATURE],
+			"Compost\nSeparate the waste and turn it into compost.\n\n💰 Cost: 1 action\nGain: {food} +%d, {nature} +%d and a flower" % [COMPOST_FOOD, COMPOST_NATURE],
 			"Make compost"
 		)
 
@@ -597,7 +621,7 @@ func _open_recycling() -> void:
 	else:
 		action_modal.open_action(
 			"recycle",
-			"Recycle your garbage.\n\nCost: 1 action\nNature +%d\n\n🌼 A little flower surprise!" % int(RECYCLING_NATURE_GAIN),
+			"Recycle your garbage.\n\n💰 Cost: 1 action\n{nature} +%d\n\n🌼 A little flower surprise!" % int(RECYCLING_NATURE_GAIN),
 			"Recycle"
 		)
 
@@ -608,6 +632,65 @@ func _recycle() -> void:
 	_recycled_today = true
 	_apply_resource_changes(0, 0, 0, RECYCLING_NATURE_GAIN)
 	_grant_flower("recycling")
+
+
+func _open_pond_options() -> void:
+	house_tasks_modal.close()
+	if _fished_today and _pond_cleaned_today:
+		action_modal.open_action("", "You have already fished and cleaned the pond today.")
+		return
+	if actions_left <= 0:
+		action_modal.open_action("", "No actions left today.")
+		return
+
+	var fish_description := "Fish: {food} +%d, {nature} -%d." % [
+		int(FISH_FOOD_GAIN),
+		int(FISH_NATURE_COST),
+	]
+	var clean_description := "Clean the pond: {nature} +%d, earn 1 flower." % int(POND_CLEAN_NATURE_GAIN)
+	if _fished_today:
+		action_modal.open_action(
+			"clean_pond",
+			"%s\n💰 Cost: 1 action." % clean_description,
+			"Clean pond"
+		)
+	elif _pond_cleaned_today:
+		action_modal.open_action(
+			"fish",
+			"%s\n💰 Cost: 1 action." % fish_description,
+			"Fish"
+		)
+	else:
+		action_modal.open_choices(
+			"Choose a pond action.\n%s\n%s\n💰 Each costs 1 action and can be done once per day." % [
+				fish_description,
+				clean_description,
+			],
+			"fish",
+			"Fish",
+			"clean_pond",
+			"Clean pond"
+		)
+
+
+func _fish() -> void:
+	if _fished_today or not _try_spend_action():
+		return
+	_fished_today = true
+	_apply_resource_changes(0, FISH_FOOD_GAIN, 0, -FISH_NATURE_COST)
+	house_tasks_modal.complete_task("food")
+
+
+func _clean_pond() -> void:
+	if _pond_cleaned_today or not _try_spend_action():
+		return
+	_pond_cleaned_today = true
+	_apply_resource_changes(0, 0, 0, POND_CLEAN_NATURE_GAIN)
+	var flower := Rewards.random_flower()
+	_plant_reward_flower(flower)
+	reward_modal.open_reward(flower, "you cleaned the pond")
+
+
 func _open_power_plant_options() -> void:
 	var energy_amount := SOLAR_PANEL_ENERGY_AMOUNT if _power_plant_upgraded else POWER_PLANT_ENERGY_AMOUNT
 	if _energy_collected_today:
@@ -622,21 +705,21 @@ func _open_power_plant_options() -> void:
 		action_modal.open_action("", "No actions left today.")
 		return
 	if _power_plant_upgraded:
-		action_modal.open_action("power_collect_energy", "Collect energy (%d units)" % int(energy_amount), "Collect")
+		action_modal.open_action("power_collect_energy", "Collect {energy} (%d units)" % int(energy_amount), "Collect")
 	elif actions_left < POWER_PLANT_UPGRADE_ACTION_COST:
-		action_modal.open_action("power_collect_energy", "Collect energy (%d units)" % int(energy_amount), "Collect")
+		action_modal.open_action("power_collect_energy", "Collect {energy} (%d units)" % int(energy_amount), "Collect")
 	else:
 		action_modal.open_choices(
 			"Choose an action",
 			"power_collect_energy",
-			"Collect energy (%d units)" % int(energy_amount),
+			"Collect {energy} (%d units)" % int(energy_amount),
 			"power_improve",
 			"🍃 Improve"
 		)
 
 
 func _power_plant_upgrade_prompt() -> String:
-	return "Switch to solar power?\nCost: 2 actions 💪\nEnergy: 10 units"
+	return "Switch to solar power?\n💰 Cost: 2 actions 💪\n{energy}: 10 units"
 
 
 func _confirm_power_plant_upgrade() -> void:
@@ -715,7 +798,7 @@ func _open_farm_options() -> void:
 			farm_action_modal.open_action("", "You have already harvested today.")
 			return
 		farm_action_modal.open_choices(
-			"Choose a harvest method",
+			"Choose a harvest method.\nBasic: {food} +19, {energy} -4, {nature} -3.\nEco: {food} +14, {energy} -3, {nature} +2.",
 			"harvest_standard",
 			"Basic harvest",
 			"harvest_careful",
@@ -731,12 +814,15 @@ func _open_farm_options() -> void:
 		if water_bar.value < BASIC_IRRIGATION_WATER_COST:
 			farm_action_modal.open_action(
 				"plant_drip",
-				"Not enough water for basic irrigation. Drip irrigation needs 8 units.",
+				"Not enough {water} for basic irrigation. Drip irrigation needs 8 units.",
 				"Drip irrigation"
 			)
 			return
 		farm_action_modal.open_choices(
-			"Choose a planting and watering method",
+			"Choose a planting and watering method.\nBasic: {water} -%d, {energy} -3, {nature} -3; ready in 8 sec.\nDrip: {water} -%d, {energy} -2, {nature} -1; ready in 15 sec." % [
+				int(BASIC_IRRIGATION_WATER_COST),
+				int(DRIP_IRRIGATION_WATER_COST),
+			],
 			"plant_basic",
 			"Basic irrigation",
 			"plant_drip",
@@ -754,7 +840,7 @@ func _on_farm_option_selected(option_id: String) -> void:
 				return
 			if not _try_spend_action():
 				return
-			_apply_resource_changes(-18, 0, -3, -5)
+			_apply_resource_changes(-BASIC_IRRIGATION_WATER_COST, 0, -3, -3)
 			_start_farm_growth(8)
 		"plant_drip":
 			if _farm_is_planted or _farm_irrigated_today:
@@ -769,14 +855,14 @@ func _on_farm_option_selected(option_id: String) -> void:
 		"harvest_standard":
 			if not _farm_is_ready or _farm_harvested_today or not _try_spend_action():
 				return
-			_apply_resource_changes(0, 20, -5, -7)
+			_apply_resource_changes(0, 19, -4, -3)
 			_farm_harvested_today = true
 			_reset_farm()
 			house_tasks_modal.complete_task("food")
 		"harvest_careful":
 			if not _farm_is_ready or _farm_harvested_today or not _try_spend_action():
 				return
-			_apply_resource_changes(0, 17, -2, 3)
+			_apply_resource_changes(0, 14, -3, 2)
 			_farm_harvested_today = true
 			_reset_farm()
 			house_tasks_modal.complete_task("food")
@@ -792,7 +878,7 @@ func _apply_resource_changes(water: float, food: float, energy: float, nature: f
 func _show_insufficient_farm_water(required_water: float) -> void:
 	farm_action_modal.open_action(
 		"",
-		"Not enough water. This irrigation method needs %d units." % int(required_water)
+		"Not enough {water}. This irrigation method needs %d units." % int(required_water)
 	)
 
 

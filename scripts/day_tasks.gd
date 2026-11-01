@@ -4,7 +4,7 @@ const MAIN_TASK_REQUIRED := 12
 
 const MAIN_TASKS := [
 	{"id": "water", "text": "Provide water for the house.", "hint": "Go to the water well and collect water."},
-	{"id": "food", "text": "Provide food for the house.", "hint": "Go to the field and harvest goods."},
+	{"id": "food", "text": "Provide food for the house.", "hint": "Catch fish at the pond or harvest crops from the field."},
 	{"id": "energy", "text": "Provide energy for the house.", "hint": "Go to the power plant or solar panel and collect energy.", "required": 10},
 ]
 
