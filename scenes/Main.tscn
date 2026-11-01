@@ -359,7 +359,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Character" parent="World" unique_id=1440305276 instance=ExtResource("9_q8u5g")]
-position = Vector2(685.3333, 424)
+position = Vector2(690.6666, 424)
 
 [node name="HUD" type="Control" parent="." unique_id=572321252]
 layout_mode = 1
