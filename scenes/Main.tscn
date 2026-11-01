@@ -604,33 +604,25 @@ text = "3 / 3"
 horizontal_alignment = 1
 
 [node name="RewardModal" parent="." unique_id=1394249451 instance=ExtResource("13_rewardmodal")]
-visible = false
 layout_mode = 1
 
 [node name="ActionModal2" parent="." unique_id=1950044030 instance=ExtResource("12_actionmodal")]
-visible = false
 layout_mode = 1
 
 [node name="CrisisModal" parent="." unique_id=517874283 instance=ExtResource("14_crisismodal")]
-visible = false
 layout_mode = 1
 
 [node name="ActionModal" parent="." unique_id=388027520 instance=ExtResource("12_actionmodal")]
-visible = false
 layout_mode = 1
 
 [node name="FarmActionModal" parent="." unique_id=627473912 instance=ExtResource("12_actionmodal")]
-visible = false
 layout_mode = 1
 
 [node name="TreeActionModal" parent="." unique_id=1008868655 instance=ExtResource("12_actionmodal")]
-visible = false
 layout_mode = 1
 
 [node name="HouseTasksModal" parent="." unique_id=224081239 instance=ExtResource("11_taskmodal")]
-visible = false
 layout_mode = 1
 
 [node name="DayModal" parent="." unique_id=1873429016 instance=ExtResource("15_daymodal")]
-visible = false
 layout_mode = 1
