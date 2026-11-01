@@ -21,7 +21,7 @@
 [ext_resource type="Texture2D" uid="uid://ck73pb0uf3exf" path="res://assets/ui_icons/water_icon.png" id="17_water_icon"]
 [ext_resource type="Texture2D" uid="uid://cxjsbqtjp54bd" path="res://assets/ui_icons/wheat_icon.png" id="18_wheat_icon"]
 [ext_resource type="Texture2D" uid="uid://cvc73lk021sik" path="res://assets/ui_icons/energy_icon.png" id="19_energy_icon"]
-[ext_resource type="Texture2D" uid="uid://c2pvc7ygy2xx4" path="res://assets/ui_icons/leafy_vegetable_icon.png" id="20_nature_icon"]
+[ext_resource type="Texture2D" uid="uid://gceekdqqb8k1" path="res://assets/nature/tree_sapling.png" id="20_nature_icon"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mwfav"]
 texture = ExtResource("11_qmy6f")

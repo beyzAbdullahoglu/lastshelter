@@ -50,7 +50,7 @@ func _format_message(message: String) -> String:
 	formatted = formatted.replace("{water}", "[img=18x18]res://assets/ui_icons/water_icon.png[/img]")
 	formatted = formatted.replace("{food}", "[img=18x18]res://assets/ui_icons/wheat_icon.png[/img]")
 	formatted = formatted.replace("{energy}", "[img=18x18]res://assets/ui_icons/energy_icon.png[/img]")
-	formatted = formatted.replace("{nature}", "[img=18x18]res://assets/ui_icons/leafy_vegetable_icon.png[/img]")
+	formatted = formatted.replace("{nature}", "[img=18x18]res://assets/nature/tree_sapling.png[/img]")
 	return formatted
 
 
