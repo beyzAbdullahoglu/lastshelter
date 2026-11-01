@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cg8vws73dbmjm"
-path="res://.godot/imported/Crisis_Industrial_Waste_1000px.png-aa86b503131d55b0bf82ab256e681144.ctex"
+uid="uid://5ny5xwoxkdeg"
+path="res://.godot/imported/industrial_waste.png-ef63c493164501c9c4afbfa3d075bb3a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/crises/Crisis_Industrial_Waste_1000px.png"
-dest_files=["res://.godot/imported/Crisis_Industrial_Waste_1000px.png-aa86b503131d55b0bf82ab256e681144.ctex"]
+source_file="res://assets/crises/industrial_waste.png"
+dest_files=["res://.godot/imported/industrial_waste.png-ef63c493164501c9c4afbfa3d075bb3a.ctex"]
 
 [params]
 

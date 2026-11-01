@@ -7,9 +7,24 @@ signal resolved(crisis: Dictionary, intervened: bool)
 
 const HUMAN_COLOR := Color(1, 0.706, 0.329)
 const NATURE_COLOR := Color(0.373, 0.827, 0.604)
+const CRISIS_IMAGE_HEIGHT := 150.0
+const FLOOD_IMAGE_HEIGHT := 180.0
+const CRISIS_IMAGES := {
+	"factory_groundwater": preload("res://assets/crises/factory_groundwater.png"),
+	"industrial_waste": preload("res://assets/crises/industrial_waste.png"),
+	"plastic_waste": preload("res://assets/crises/plastic_waste.png"),
+	"air_pollution": preload("res://assets/crises/air_pollution.png"),
+	"deforestation": preload("res://assets/crises/deforestation.png"),
+	"forest_fire": preload("res://assets/crises/forest_fire.png"),
+	"flash_flood": preload("res://assets/crises/flood.png"),
+	"heatwave": preload("res://assets/crises/heatwave.png"),
+	"drought": preload("res://assets/crises/drought.png"),
+	"biodiversity_loss": preload("res://assets/crises/loss_of_biodiversity.png"),
+}
 
 @onready var category_label: Label = %CategoryLabel
 @onready var title_label: Label = %TitleLabel
+@onready var crisis_image: TextureRect = %CrisisImage
 @onready var story_label: Label = %StoryLabel
 @onready var choice_view: Control = %ChoiceView
 @onready var ignore_effects_label: Label = %IgnoreEffectsLabel
@@ -46,6 +61,9 @@ func open_crisis(crisis: Dictionary, can_intervene: bool) -> void:
 	category_label.text = CrisisDeck.CATEGORY_NAMES[crisis.category].to_upper()
 	category_label.add_theme_color_override("font_color", HUMAN_COLOR if crisis.category == CrisisDeck.HUMAN else NATURE_COLOR)
 	title_label.text = crisis.title
+	crisis_image.texture = CRISIS_IMAGES.get(crisis.id) as Texture2D
+	crisis_image.custom_minimum_size.y = FLOOD_IMAGE_HEIGHT if crisis.id == "flash_flood" else CRISIS_IMAGE_HEIGHT
+	crisis_image.visible = crisis_image.texture != null
 	story_label.text = crisis.story
 	ignore_effects_label.text = _format_outcome(crisis.ignore)
 	intervene_text_label.text = crisis.intervene.text
