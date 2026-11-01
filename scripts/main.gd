@@ -24,7 +24,9 @@ const TREE_MATURITY_SECONDS := 10.0
 const TREE_TILE_SCALE := 1.25
 const TREE_GROWING_SCALE := 0.9
 const TREE_VERTICAL_OFFSET := -12.0
-const WATER_TANK_WATER := 10.0
+const WATER_TANK_WATER := 6.0
+const WELL_WATER_GAIN := 12.0
+const WELL_NATURE_COST := 5.0
 const COMPOST_FOOD := 5.0
 const COMPOST_NATURE := 6.0
 const RECYCLING_NATURE_GAIN := 5.0
@@ -49,11 +51,6 @@ const RESOURCE_BASELINES := {"water": 35.0, "food": 30.0, "energy": 30.0, "natur
 const DAILY_RENEWAL := {"water": 2.0, "food": 1.0, "energy": 1.0, "nature": 1.0}
 # Seconds into the day at which each daily crisis appears (one human, one natural).
 const CRISIS_TIMES := [20.0, 60.0]
-
-# Object name -> house task it fulfils when the character reaches it.
-const OBJECT_ACTIONS := {
-	"WaterWell": {"task": "water", "message": "Collect water ({units} units)", "button": "Collect", "done": "Water is already collected for today."},
-}
 
 @onready var character = $World/Character
 @onready var interactive_objects: Control = $World/InteractiveObjects
@@ -91,7 +88,6 @@ var _farm_irrigated_today := false
 var _farm_harvested_today := false
 var _farm_growth_generation := 0
 var _water_tank_unlocked := false
-var _water_tank_used_today := false
 var _composted_today := false
 var _recycled_today := false
 var _power_plant_upgraded := false
@@ -246,6 +242,8 @@ func _begin_next_day() -> void:
 # Applies the daily renewal for current_day; drought crises scale the water part.
 func _renew_resources() -> Dictionary:
 	var renewal := DAILY_RENEWAL.duplicate()
+	if _water_tank_unlocked:
+		renewal.water += WATER_TANK_WATER
 	renewal.water *= _water_growth_factors.get(current_day, 1.0)
 	_water_growth_factors.erase(current_day)
 	var bars := _resource_bars()
@@ -269,7 +267,6 @@ func _start_next_day() -> void:
 	actions_left = MAX_ACTIONS
 	_farm_irrigated_today = false
 	_farm_harvested_today = false
-	_water_tank_used_today = false
 	_composted_today = false
 	_recycled_today = false
 	_tree_planted_today = false
@@ -457,8 +454,8 @@ func _on_action_modal_confirmed(task_id: String) -> void:
 	match task_id:
 		"unlock_water_tank":
 			_unlock_water_tank()
-		"use_water_tank":
-			_use_water_tank()
+		"collect_water":
+			_collect_water_from_well()
 		"make_compost":
 			_make_compost()
 		"recycle":
@@ -493,6 +490,9 @@ func _on_character_arrived(target: Node) -> void:
 	if target != null and target.name == "WaterTank":
 		_open_water_tank()
 		return
+	if target != null and target.name == "WaterWell":
+		_open_water_well()
+		return
 	if target != null and target.name == "Compost":
 		_open_compost()
 		return
@@ -501,32 +501,25 @@ func _on_character_arrived(target: Node) -> void:
 		return
 	if target != null and target.name == "RecyclingBin":
 		_open_recycling()
-		return
-	if target == null or not OBJECT_ACTIONS.has(target.name):
-		return
-
-	var action: Dictionary = OBJECT_ACTIONS[target.name]
-	house_tasks_modal.close()
-	if house_tasks_modal.is_completed(action.task):
-		action_modal.open_action(action.task, action.done)
-	elif actions_left <= 0:
-		action_modal.open_action(action.task, "No actions left today.")
-	else:
-		action_modal.open_action(action.task, action.message.format({"units": DayTasks.MAIN_TASK_REQUIRED}), action.button)
 
 
-# Unlocking costs one action (once); afterwards the tank gives free water once per day.
+# Unlocking costs one action and permanently increases water renewal on later days.
 func _open_water_tank() -> void:
 	house_tasks_modal.close()
 	if not _water_tank_unlocked:
 		if actions_left <= 0:
 			action_modal.open_action("", "Blue Water Tank\nUnlock requires 1 action.\nNo actions left today.")
 		else:
-			action_modal.open_action("unlock_water_tank", "Blue Water Tank\nUnlock requires 1 action.", "Unlock")
-	elif _water_tank_used_today:
-		action_modal.open_action("", "Blue Water Tank\nYou have already used the water tank today.")
+			action_modal.open_action(
+				"unlock_water_tank",
+				"Blue Water Tank\nActivate rainwater collection.\nDaily water renewal: +%d starting next day.\nCost: 1 action." % int(WATER_TANK_WATER),
+				"Unlock"
+			)
 	else:
-		action_modal.open_action("use_water_tank", "Blue Water Tank\nCollect %d water." % WATER_TANK_WATER, "Collect")
+		action_modal.open_action(
+			"",
+			"Blue Water Tank\nRainwater collection is active.\nDaily water renewal: +%d." % int(WATER_TANK_WATER)
+		)
 
 
 func _unlock_water_tank() -> void:
@@ -536,11 +529,34 @@ func _unlock_water_tank() -> void:
 	_refresh_water_tank()
 
 
-func _use_water_tank() -> void:
-	if not _water_tank_unlocked or _water_tank_used_today:
+func _open_water_well() -> void:
+	house_tasks_modal.close()
+	if actions_left <= 0:
+		action_modal.open_action("", "No actions left today.")
 		return
-	_water_tank_used_today = true
-	_apply_resource_changes(WATER_TANK_WATER, 0, 0, 0)
+	var tank_tip := (
+		"\n\n💡 Unlock the water tank to add +%d water to your supply at the start of each new day."
+		% int(WATER_TANK_WATER)
+		if not _water_tank_unlocked
+		else "\n\nYour water tank adds +%d water to your supply each new day." % int(WATER_TANK_WATER)
+	)
+	action_modal.open_action(
+		"collect_water",
+		"Collect water from the well.\nWater +%d\nNature -%d\nCost: 1 action.%s" % [
+			int(WELL_WATER_GAIN),
+			int(WELL_NATURE_COST),
+			tank_tip,
+		],
+		"Collect"
+	)
+
+
+func _collect_water_from_well() -> void:
+	if not _try_spend_action():
+		return
+	_apply_resource_changes(WELL_WATER_GAIN, 0, 0, -WELL_NATURE_COST)
+	if not house_tasks_modal.is_completed("water"):
+		house_tasks_modal.complete_task("water")
 
 
 func _refresh_water_tank() -> void:
@@ -828,13 +844,6 @@ func _start_pin_bob() -> void:
 
 
 func _on_house_task_completed(task_id: String, is_special: bool) -> void:
-	# TODO: remaining per-task effects to be specified.
-	match task_id:
-		"water":
-			# Collected water is spent from the global water resource.
-			water_bar.value -= DayTasks.MAIN_TASK_REQUIRED
-		"food":
-			pass
 	if is_special:
 		_grant_flower(task_id)
 	print("Task completed: %s (special: %s)" % [task_id, is_special])
