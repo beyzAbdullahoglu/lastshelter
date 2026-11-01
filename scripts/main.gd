@@ -10,6 +10,10 @@ const FARM_GROWING_TEXTURE: Texture2D = preload("res://assets/agriculture/growin
 const FARM_WATERED_TEXTURE: Texture2D = preload("res://assets/agriculture/watered.png")
 const TREE_GROWING_TEXTURE: Texture2D = preload("res://assets/nature/tree_sapling.png")
 const TREE_HEALTHY_TEXTURE: Texture2D = preload("res://assets/nature/tree_healthy.png")
+const CRISIS_SOUND: AudioStream = preload("res://audio/crises_audio.wav")
+const RESOURCE_GAIN_SOUND: AudioStream = preload("res://audio/resource_gain.wav")
+const NEW_TREASURE_SOUND: AudioStream = preload("res://audio/new_treasure.wav")
+const DAY_START_SOUND: AudioStream = preload("res://audio/day_start.wav")
 const REWARD_FLOWER_SIZE := Vector2(56, 56)
 # Flowers line up parallel to the house's left wall (2:1 isometric, running down-right);
 # a full row continues in a new row one step further out from the wall (down-left).
@@ -112,6 +116,10 @@ var _tree_sprites: Dictionary = {}
 var _planted_trees: Dictionary = {}
 var _pending_tree_cell := Vector2i(-1, -1)
 var _tree_planted_today := false
+var _crisis_sound_player := AudioStreamPlayer.new()
+var _resource_gain_sound_player := AudioStreamPlayer.new()
+var _new_treasure_sound_player := AudioStreamPlayer.new()
+var _day_start_sound_player := AudioStreamPlayer.new()
 
 
 func _ready() -> void:
@@ -132,6 +140,15 @@ func _ready() -> void:
 	_refresh_water_tank()
 	crisis_modal.choice_made.connect(_on_crisis_choice_made)
 	crisis_modal.resolved.connect(_on_crisis_resolved)
+	_crisis_sound_player.stream = CRISIS_SOUND
+	add_child(_crisis_sound_player)
+	_resource_gain_sound_player.stream = RESOURCE_GAIN_SOUND
+	add_child(_resource_gain_sound_player)
+	_new_treasure_sound_player.stream = NEW_TREASURE_SOUND
+	add_child(_new_treasure_sound_player)
+	_day_start_sound_player.stream = DAY_START_SOUND
+	add_child(_day_start_sound_player)
+	_day_start_sound_player.play()
 	_todays_crises = _crisis_deck.draw_day()
 	_start_pin_bob()
 	_refresh_day_hud()
@@ -242,6 +259,7 @@ func _begin_next_day() -> void:
 	)
 	await day_modal.continued
 	_day_over = false
+	_day_start_sound_player.play()
 
 
 # Applies the daily renewal for current_day; drought crises scale the water part.
@@ -545,6 +563,7 @@ func _unlock_water_tank() -> void:
 		return
 	_water_tank_unlocked = true
 	_refresh_water_tank()
+	_new_treasure_sound_player.play()
 
 
 func _open_water_well() -> void:
@@ -578,6 +597,7 @@ func _collect_water_from_well() -> void:
 		return
 	_well_used_today = true
 	_apply_resource_changes(WELL_WATER_GAIN, 0, 0, -WELL_NATURE_COST)
+	_resource_gain_sound_player.play()
 	if not house_tasks_modal.is_completed("water"):
 		house_tasks_modal.complete_task("water")
 
@@ -677,6 +697,7 @@ func _fish() -> void:
 		return
 	_fished_today = true
 	_apply_resource_changes(0, FISH_FOOD_GAIN, 0, -FISH_NATURE_COST)
+	_resource_gain_sound_player.play()
 	house_tasks_modal.complete_task("food")
 
 
@@ -735,6 +756,7 @@ func _collect_power_energy() -> void:
 		return
 	_energy_collected_today = true
 	energy_bar.value += SOLAR_PANEL_ENERGY_AMOUNT if _power_plant_upgraded else POWER_PLANT_ENERGY_AMOUNT
+	_resource_gain_sound_player.play()
 	if not house_tasks_modal.is_completed("energy"):
 		house_tasks_modal.complete_task("energy")
 
@@ -749,6 +771,7 @@ func _improve_power_plant() -> void:
 	power_plant_button.texture_hover = SOLAR_PANEL_TEXTURE
 	power_plant_button.texture_pressed = SOLAR_PANEL_TEXTURE
 	_play_power_plant_construction_effect()
+	_new_treasure_sound_player.play()
 	action_modal.open_action(
 		"",
 		"Congratulations! Your shelter now runs on renewable solar power, helping protect the natural world."
@@ -855,6 +878,7 @@ func _on_farm_option_selected(option_id: String) -> void:
 			if not _farm_is_ready or _farm_harvested_today or not _try_spend_action():
 				return
 			_apply_resource_changes(0, 19, -4, -3)
+			_resource_gain_sound_player.play()
 			_farm_harvested_today = true
 			_reset_farm()
 			house_tasks_modal.complete_task("food")
@@ -862,6 +886,7 @@ func _on_farm_option_selected(option_id: String) -> void:
 			if not _farm_is_ready or _farm_harvested_today or not _try_spend_action():
 				return
 			_apply_resource_changes(0, 14, -3, 2)
+			_resource_gain_sound_player.play()
 			_farm_harvested_today = true
 			_reset_farm()
 			house_tasks_modal.complete_task("food")
@@ -973,6 +998,7 @@ func _trigger_crisis() -> void:
 	house_tasks_modal.close()
 	action_modal.close()
 	crisis_modal.open_crisis(_todays_crises.pop_front(), actions_left > 0)
+	_crisis_sound_player.play()
 
 
 func _on_crisis_choice_made(crisis: Dictionary, intervened: bool) -> void:
