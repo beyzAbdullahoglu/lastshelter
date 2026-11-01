@@ -1,0 +1,169 @@
+[gd_scene format=3 uid="uid://crctxtreyonuv"]
+
+[ext_resource type="Script" uid="uid://bqex78f7hxoo6" path="res://scripts/start_menu.gd" id="1_script"]
+[ext_resource type="Theme" uid="uid://cauvxg5r5vlji" path="res://themes/modal_theme.tres" id="2_theme"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_translucent_panel"]
+bg_color = Color(1, 0.96, 0.8, 0.9)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.91, 0.75, 0.3, 0.95)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+
+[node name="StartMenu" type="Control" unique_id=920456164]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_script")
+
+[node name="Background" type="ColorRect" parent="." unique_id=864267244]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.13, 0.22, 0.17, 1)
+
+[node name="Dim" type="ColorRect" parent="." unique_id=908426009]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.02, 0.08, 0.05, 0.12)
+
+[node name="Center" type="CenterContainer" parent="." unique_id=2108326733]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="Panel" type="PanelContainer" parent="Center" unique_id=1240143851]
+custom_minimum_size = Vector2(720, 600)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_translucent_panel")
+
+[node name="Margin" type="MarginContainer" parent="Center/Panel" unique_id=1872520262]
+layout_mode = 2
+theme_override_constants/margin_left = 34
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 34
+theme_override_constants/margin_bottom = 30
+
+[node name="Content" type="Control" parent="Center/Panel/Margin" unique_id=1338573660]
+custom_minimum_size = Vector2(0, 540)
+layout_mode = 2
+
+[node name="MenuContent" type="VBoxContainer" parent="Center/Panel/Margin/Content" unique_id=1277244582]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="Title" type="Label" parent="Center/Panel/Margin/Content/MenuContent" unique_id=92124451]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.47, 0.06, 1)
+theme_override_font_sizes/font_size = 48
+text = "Last Shelter"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="Center/Panel/Margin/Content/MenuContent" unique_id=2011902527]
+layout_mode = 2
+theme_override_font_sizes/font_size = 19
+text = "Restore your home. Protect the world around it."
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="Center/Panel/Margin/Content/MenuContent" unique_id=1567501337]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+
+[node name="StartButton" type="Button" parent="Center/Panel/Margin/Content/MenuContent" unique_id=800284172]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(250, 54)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_default_cursor_shape = 2
+text = "🌱  Start"
+
+[node name="HowToPlayButton" type="Button" parent="Center/Panel/Margin/Content/MenuContent" unique_id=1471716202]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(250, 54)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_default_cursor_shape = 2
+text = "📖  How to Play"
+
+[node name="RulesContent" type="VBoxContainer" parent="Center/Panel/Margin/Content" unique_id=1741182530]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 14
+
+[node name="RulesTitle" type="Label" parent="Center/Panel/Margin/Content/RulesContent" unique_id=1824138503]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.47, 0.06, 1)
+theme_override_font_sizes/font_size = 30
+text = "🌿 How to Play"
+horizontal_alignment = 1
+
+[node name="RulesScroll" type="ScrollContainer" parent="Center/Panel/Margin/Content/RulesContent" unique_id=1778741948]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="RulesText" type="RichTextLabel" parent="Center/Panel/Margin/Content/RulesContent/RulesScroll" unique_id=913955194]
+custom_minimum_size = Vector2(630, 0)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.29, 0.22, 0.1, 1)
+theme_override_font_sizes/normal_font_size = 16
+bbcode_enabled = true
+text = "[font_size=18][b]🎯 Goal[/b][/font_size]
+Survive all 6 days. Each day lasts 90 seconds. Complete the house's daily Water, Food and Energy tasks and keep your resources above their targets.
+
+[font_size=18][b]⚡ Actions & daily targets[/b][/font_size]
+You have 5 actions each day. Most activities cost 1 action, so plan carefully. At day's end, keep at least [img=18x18]res://assets/ui_icons/water_icon.png[/img] 35, [img=18x18]res://assets/ui_icons/wheat_icon.png[/img] 30, [img=18x18]res://assets/ui_icons/energy_icon.png[/img] 30 and [img=18x18]res://assets/ui_icons/leafy_vegetable_icon.png[/img] 40. Falling short or missing a main task costs a heart.
+
+[font_size=18][b]🌱 Gather & grow[/b][/font_size]
+[img=20x20]res://assets/ui_icons/water_icon.png[/img] Well: once a day, get +12 water and lose 5 Nature. Unlock the tank to raise daily water renewal from +2 to +6.
+[img=20x20]res://assets/ui_icons/wheat_icon.png[/img] Pond: fish once for +8 Food and -1 Nature, or clean once for +7 Nature and a flower.
+[img=20x20]res://assets/ui_icons/leafy_vegetable_icon.png[/img] Farm: irrigate, wait, then harvest. Basic is faster and yields more; drip/eco uses fewer resources but yields less.
+Plant one tree each day: spend 5 Water and gain 6 Nature, then +4 more when it matures. Compost and recycling also help restore Nature.
+
+[font_size=18][b]🔋 Energy & events[/b][/font_size]
+Collect energy at the power plant once per day. Solar costs 2 actions to unlock and prevents the old plant's daily Nature loss. Crises appear during the day; responding costs an action but may reduce damage or earn a flower."
+fit_content = true
+scroll_active = false
+
+[node name="BackButton" type="Button" parent="Center/Panel/Margin/Content/RulesContent" unique_id=767895659]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 44)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_default_cursor_shape = 2
+text = "Back"
